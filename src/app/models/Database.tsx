@@ -7,7 +7,7 @@ class Card extends Realm.Object {
 	format: string;
 	color: string;
 
-	static gen = ({title, code, format, color}: Database.Card.GenProps): Database.Card.Schema => {
+	static generate = ({title, code, format, color}: Database.Card.GenerateProps): Database.Card.Schema => {
 		return {
 			_id: new Realm.BSON.ObjectId(),
 			title: title,
@@ -19,14 +19,14 @@ class Card extends Realm.Object {
 
 	static schema = {
 		name: "Card",
+		primaryKey: "_id",
 		properties: {
-			_id: "int",
+			_id: "objectId",
 			title: "string",
 			code: "string",
 			format: "string",
 			color: "string",
 		},
-		primaryKey: "_id",
 	};
 };
 
@@ -45,7 +45,7 @@ const Database = {
 
 declare namespace Database {
 	namespace Card {
-		type GenProps = {
+		type GenerateProps = {
 			title: string,
 			code: string,
 			format: string,

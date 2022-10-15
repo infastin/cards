@@ -2,6 +2,8 @@
  * @format
  */
 
+import "@react-native-anywhere/polyfill-base64";
+import 'react-native-get-random-values';
 import 'expo-dev-client';
 import {registerRootComponent} from "expo";
 import {useState} from 'react';

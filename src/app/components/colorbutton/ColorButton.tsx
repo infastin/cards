@@ -70,7 +70,7 @@ const ColorButtonComponent = ({color, theme, status, disabled, onPress, style}: 
 									{
 										borderColor: selectionColor,
 										borderWidth: 2,
-										borderRadius: 15,
+										borderRadius: 20,
 									}
 								]}
 							>
@@ -90,9 +90,9 @@ ColorButtonComponent.displayName = "ColorButton";
 
 const styles = StyleSheet.create({
 	container: {
-		width: 30,
-		height: 30,
-		borderRadius: 15,
+		width: 40,
+		height: 40,
+		borderRadius: 20,
 	},
 	circleContainer: {
 		justifyContent: "center",
@@ -100,9 +100,9 @@ const styles = StyleSheet.create({
 	},
 	circle: {
 		margin: 5,
-		width: 20,
-		height: 20,
-		borderRadius: 10,
+		width: 30,
+		height: 30,
+		borderRadius: 15,
 	}
 });
 

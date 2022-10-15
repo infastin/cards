@@ -4,22 +4,24 @@ import React from "react";
 import {Camera, CameraType} from "expo-camera";
 import {ScaledSize, Dimensions, View, StyleSheet} from "react-native";
 import {Text} from "react-native-paper";
-import {StackProps} from "./Types";
+import {StackProps} from "../types/Navigation";
 import {MD3Theme} from "react-native-paper/lib/typescript/types";
 
 const ScanTypesCodes = {
-	CODABAR: BarCodeScanner.Constants.BarCodeType.codabar,
 	CODE128: BarCodeScanner.Constants.BarCodeType.code128,
 	CODE93: BarCodeScanner.Constants.BarCodeType.code93,
 	CODE39: BarCodeScanner.Constants.BarCodeType.code39,
-	AZTEC: BarCodeScanner.Constants.BarCodeType.aztec,
 	PDF417: BarCodeScanner.Constants.BarCodeType.pdf417,
 	EAN8: BarCodeScanner.Constants.BarCodeType.ean8,
 	EAN13: BarCodeScanner.Constants.BarCodeType.ean13,
-	ITF14: BarCodeScanner.Constants.BarCodeType.itf14,
+	QR: BarCodeScanner.Constants.BarCodeType.qr,
 };
-const ScanTypesStr = Object.fromEntries(Object.entries(ScanTypesCodes).map(([k, v]) => [v, k]));
 const ScanTypesAll = Object.values(ScanTypesCodes);
+const ScanTypesStr = Object.fromEntries(
+	Object.entries(ScanTypesCodes).map(
+		([k, v]) => [v, k]
+	)
+);
 
 export const ScanTypes = Object.assign(
 	ScanTypesCodes,
@@ -35,21 +37,19 @@ export type ScanProps = StackProps<"Scan"> & {
 
 const Scan = ({theme, navigation, route}: ScanProps) => {
 	const [hasPermission, setHasPermission] = React.useState<boolean>(false);
-	const [dimension, setDimension] = React.useState<ScaledSize>(null as any);
+	const [dimension, setDimension] = React.useState<ScaledSize>(Dimensions.get("window"));
 
 	React.useEffect(() => {
 		(async () => {
 			const status = await Camera.requestCameraPermissionsAsync();
 			setHasPermission(status.status === "granted");
 		})();
-
-		setDimension(Dimensions.get("window"));
 	}, []);
 
 	React.useEffect(() => {
 		const listener = Dimensions.addEventListener("change", ({window}) => setDimension(window));
 		return () => listener.remove();
-	});
+	}, []);
 
 	const onBarCodeScanned = (result: BarCodeScannerResult) => {
 		if (!route.params.types.find((type) => type === result.type)) {
@@ -70,7 +70,6 @@ const Scan = ({theme, navigation, route}: ScanProps) => {
 			return;
 		}
 
-		navigation.goBack();
 		navigation.navigate("AddCard", {
 			code: result.data,
 			format: ScanTypes.Str[result.type],

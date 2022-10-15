@@ -1,10 +1,13 @@
 import React from "react";
-import {FlatList, StyleSheet, View} from "react-native";
-import {Button, TextInput, MD3Theme, withTheme, Text, HelperText, Chip} from "react-native-paper";
+import {Dimensions, FlatList, ScaledSize, StyleSheet, View} from "react-native";
+import {Button, TextInput, MD3Theme, withTheme, Text, HelperText, Chip, Snackbar} from "react-native-paper";
 import ColorButton from "../components/colorbutton";
 import {ScanTypes} from "./Scan";
-import {StackProps} from "./Types";
+import {StackProps} from "../types/Navigation";
 import Database from "../models/Database";
+import {ColorPallette} from "../types/Colors";
+import BwipJs from "../types/BwipJs";
+import {BarcodeTypes} from "../components/Barcode";
 
 export type AddCardProps = StackProps<"AddCard"> & {
 	theme: MD3Theme,
@@ -16,7 +19,7 @@ type Error = {
 };
 
 const AddCard = ({theme, navigation, route}: AddCardProps) => {
-	const colorList = ["red", "black", "green", "cyan"];
+	const colorList = Object.entries(ColorPallette).map(([_, v]) => v.bg);
 	const [selColor, setSelColor] = React.useState<string>(colorList[0]);
 
 	const formatList: string[] = Object.values(ScanTypes.Str);
@@ -27,6 +30,12 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 
 	const [codeValue, setCodeValue] = React.useState<string>(route.params?.code ? route.params.code : "");
 	const [codeError, setCodeError] = React.useState<Error>({is: false, text: ""});
+
+	const [snackVisible, setSnackVisible] = React.useState<boolean>(false);
+	const [snackMsg, setSnackMsg] = React.useState<string>("");
+
+	const [colorListKey, setColorListKey] = React.useState<"colorListKey0" | "colorListKey1">("colorListKey0");
+	let dimension: ScaledSize = Dimensions.get("window");
 
 	const db = Database.useDatabase();
 
@@ -43,10 +52,19 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 			if (route.params.code) {
 				setCodeValue(route.params.code);
 			}
-
-			return unsubscribe;
 		});
+
+		return unsubscribe;
 	}, [navigation, route]);
+
+	React.useEffect(() => {
+		dimension = Dimensions.get("window");
+		const listener = Dimensions.addEventListener("change", ({window}) => {
+			dimension = window;
+			setColorListKey(colorListKey == "colorListKey0" ? "colorListKey1" : "colorListKey0");
+		});
+		return () => listener.remove();
+	}, [dimension, colorListKey]);
 
 	const onAddPress = () => {
 		let errors = 0;
@@ -65,10 +83,20 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 			return;
 		}
 
+		try {
+			BwipJs.raw(BarcodeTypes[selFormat], codeValue);
+		} catch (err) {
+			const strError: string = err.toString();
+			const errorMsg = strError.split(":")[2].trim();
+			setSnackMsg(`Error: ${errorMsg}`);
+			setSnackVisible(true);
+			return;
+		}
+
 		db.write(() => {
 			db.create(
 				"Card",
-				Database.Card.gen({
+				Database.Card.generate({
 					title: titleValue,
 					code: codeValue,
 					format: selFormat,
@@ -76,6 +104,8 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 				})
 			);
 		});
+
+		navigation.navigate("Cards");
 	};
 
 	const onTitleChange = (value: string) => {
@@ -107,81 +137,94 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 	});
 
 	return (
-		<View style={styles.container}>
-			<View style={styles.inputContainer}>
-				<TextInput
-					mode="outlined"
-					label="Title"
-					onChangeText={onTitleChange}
-					error={titleError.is}
-				/>
-				<HelperText type="error" visible={titleError.is}>
-					{titleError.text}
-				</HelperText>
-				<TextInput
-					mode="outlined"
-					label="Code"
-					onChangeText={onCodeChange}
-					error={codeError.is}
-					value={codeValue}
-				/>
-				<HelperText type="error" visible={codeError.is}>
-					{codeError.text}
-				</HelperText>
-			</View>
-			<View style={styles.formatContainer}>
-				<Text style={styles.choose} variant="titleSmall">Choose format</Text>
-				<FlatList
-					style={styles.formatGroup}
-					numColumns={3}
-					data={formatData}
-					keyExtractor={item => "formatItem" + item.index}
-					renderItem={({item}) => (
-						<Chip
-							style={[styles.format]}
-							mode="flat"
-							selected={selFormat === item.format}
-							onPress={() => setSelFormat(item.format)}
-						>
-							{item.format}
-						</Chip>
-					)}
-				/>
-			</View>
-			<View style={styles.colorContainer}>
-				<Text style={styles.choose} variant="titleSmall">Choose color</Text>
-				<ColorButton.Group style={styles.colorGroup} color={selColor} onColorChange={(color) => setSelColor(color)}>
-					<FlatList
-						data={colorData}
-						numColumns={8}
-						renderItem={({item}) => (
-							<ColorButton style={[styles.colorButton]} color={item.color} />
-						)}
-						keyExtractor={item => "colorButton" + item.index}
+		<View>
+			<View style={styles.container}>
+				<View style={styles.inputContainer}>
+					<TextInput
+						mode="outlined"
+						label="Title"
+						onChangeText={onTitleChange}
+						error={titleError.is}
 					/>
-				</ColorButton.Group>
+					<HelperText type="error" visible={titleError.is}>
+						{titleError.text}
+					</HelperText>
+					<TextInput
+						mode="outlined"
+						label="Code"
+						onChangeText={onCodeChange}
+						error={codeError.is}
+						value={codeValue}
+					/>
+					<HelperText type="error" visible={codeError.is}>
+						{codeError.text}
+					</HelperText>
+				</View>
+				<View style={styles.formatContainer}>
+					<Text style={styles.choose} variant="titleSmall">Choose format</Text>
+					<FlatList
+						numColumns={3}
+						data={formatData}
+						keyExtractor={item => `formatItem-${item.index}`}
+						renderItem={({item}) => (
+							<Chip
+								style={styles.format}
+								mode={selFormat === item.format ? "flat" : "outlined"}
+								onPress={() => setSelFormat(item.format)}
+							>
+								{item.format}
+							</Chip>
+						)}
+					/>
+				</View>
+				<View style={styles.colorContainer}>
+					<Text style={styles.choose} variant="titleSmall">Choose color</Text>
+					<ColorButton.Group style={styles.colorGroup} color={selColor} onColorChange={(color) => setSelColor(color)}>
+						<FlatList
+							key={colorListKey}
+							numColumns={Math.floor(dimension.width / 50)}
+							contentContainerStyle={styles.colorList}
+							data={colorData}
+							keyExtractor={(item) => `colorButton-${item.index}`}
+							renderItem={({item}) => (
+								<ColorButton style={styles.colorButton} color={item.color} />
+							)}
+						/>
+					</ColorButton.Group>
+				</View>
+				<View style={styles.buttonContainer}>
+					<Button
+						style={styles.scanButton}
+						mode="outlined"
+						onPress={() => {
+							navigation.navigate("Scan", {
+								types: ScanTypes.ALL,
+							});
+						}}
+					>
+						Scan
+					</Button>
+					<Button
+						style={styles.addButton}
+						mode="contained"
+						onPress={onAddPress}
+					>
+						Add
+					</Button>
+				</View>
 			</View>
-			<View style={styles.buttonContainer}>
-				<Button
-					style={styles.scanButton}
-					mode="outlined"
-					onPress={() => {
-						navigation.navigate("Scan", {
-							types: ScanTypes.ALL,
-						});
-					}}
-				>
-					Scan
-				</Button>
-				<Button
-					style={styles.addButton}
-					mode="contained"
-					onPress={onAddPress}
-				>
-					Add
-				</Button>
-			</View>
-		</View >
+			<Snackbar
+				style={{backgroundColor: theme.colors.errorContainer}}
+				visible={snackVisible}
+				duration={3500}
+				onDismiss={() => {
+					setSnackVisible(false);
+					setSnackMsg("");
+				}}
+			>
+				<Text style={{color: theme.colors.onErrorContainer}}>{snackMsg}</Text>
+			</Snackbar>
+		</View>
 	)
 }
 
@@ -197,12 +240,12 @@ const styles = StyleSheet.create({
 		marginTop: 6,
 		marginBottom: 6,
 	},
-	formatGroup: {
-		flexDirection: "row",
-		flexWrap: "wrap",
+	choose: {
+		marginBottom: 6,
 	},
 	format: {
 		margin: 3,
+		flex: 1,
 	},
 	buttonContainer: {
 		marginTop: 6,
@@ -221,11 +264,11 @@ const styles = StyleSheet.create({
 		marginTop: 6,
 		marginBottom: 6,
 	},
-	choose: {
-		marginBottom: 6,
-	},
 	colorGroup: {
-		flexDirection: "row",
+		alignItems: "center",
+	},
+	colorList: {
+		alignItems: "center",
 	},
 	colorButton: {
 		margin: 3,
