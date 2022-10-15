@@ -1,7 +1,8 @@
 {
   "expo": {
     "name": "Cards",
-    "slug": "Cards",
+    "slug": "cards",
+    "owner": "infastin",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -30,6 +31,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "091befdc-64d5-4483-8bdb-ce5899fe1638"
+      }
     }
   }
 }

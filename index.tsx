@@ -2,6 +2,7 @@
  * @format
  */
 
+import 'expo-dev-client';
 import {registerRootComponent} from "expo";
 import {useState} from 'react';
 import {Appearance} from 'react-native';
