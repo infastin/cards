@@ -4,8 +4,9 @@ import React from "react";
 import {Camera, CameraType} from "expo-camera";
 import {ScaledSize, Dimensions, View, StyleSheet} from "react-native";
 import {Text} from "react-native-paper";
-import {StackProps} from "../types/Navigation";
+import {StackProps} from "../models/Navigation";
 import {MD3Theme} from "react-native-paper/lib/typescript/types";
+import Locale from "../locale";
 
 const ScanTypesCodes = {
 	CODE128: BarCodeScanner.Constants.BarCodeType.code128,
@@ -35,7 +36,7 @@ export type ScanProps = StackProps<"Scan"> & {
 	theme: MD3Theme,
 };
 
-const Scan = ({theme, navigation, route}: ScanProps) => {
+const Scan = ({navigation, route}: ScanProps) => {
 	const [hasPermission, setHasPermission] = React.useState<boolean>(false);
 	const [dimension, setDimension] = React.useState<ScaledSize>(Dimensions.get("window"));
 
@@ -76,6 +77,8 @@ const Scan = ({theme, navigation, route}: ScanProps) => {
 		});
 	};
 
+	const loc = Locale.useLocale();
+
 	return (
 		<>
 			{hasPermission ?
@@ -97,7 +100,7 @@ const Scan = ({theme, navigation, route}: ScanProps) => {
 						<Rect x="10%" y="20%" width="80%" height="30%" rx="16" stroke="white" strokeWidth="2" />
 					</Svg>
 					<View style={styles.helpContainer}>
-						<Text variant="titleMedium" style={styles.help}>Point the camera at the barcode</Text>
+						<Text variant="titleMedium" style={styles.help}>{loc.t("ScanHelpMsg")}</Text>
 					</View>
 				</BarCodeScanner>
 				:

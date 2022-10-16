@@ -6,14 +6,16 @@ class Card extends Realm.Object {
 	code: string;
 	format: string;
 	color: string;
+	bid: Realm.BSON.ObjectId;
 
-	static generate = ({title, code, format, color}: Database.Card.GenerateProps): Database.Card.Schema => {
+	static generate = ({title, code, format, color, bid}: Database.Card.GenerateProps): Database.Card.Schema => {
 		return {
 			_id: new Realm.BSON.ObjectId(),
 			title: title,
 			code: code,
 			format: format,
-			color: color
+			color: color,
+			bid: bid,
 		}
 	}
 
@@ -26,12 +28,64 @@ class Card extends Realm.Object {
 			code: "string",
 			format: "string",
 			color: "string",
+			bid: "objectId",
 		},
 	};
+}
+
+class Barcode extends Realm.Object {
+	_id: Realm.BSON.ObjectId;
+	code: string;
+	format: string;
+	data: ArrayBuffer;
+
+	static generate = ({code, format, data}: Database.Barcode.GenerateProps): Database.Barcode.Schema => {
+		return {
+			_id: new Realm.BSON.ObjectId(),
+			code: code,
+			format: format,
+			data: data,
+		};
+	};
+
+	static schema = {
+		name: "Barcode",
+		primaryKey: "_id",
+		properties: {
+			_id: "objectId",
+			code: "string",
+			format: "string",
+			data: "data",
+		},
+	};
+}
+
+class Settings extends Realm.Object {
+	_id: Realm.BSON.ObjectId;
+	theme: string;
+	lang: string;
+
+	static generate = ({theme, lang}: Database.Settings.GenerateProps): Database.Settings.Schema => {
+		return {
+			_id: new Realm.BSON.ObjectId(),
+			theme: theme,
+			lang: lang,
+		};
+	};
+
+	static schema = {
+		name: "Settings",
+		primaryKey: "_id",
+		properties: {
+			_id: "objectId",
+			theme: "string",
+			lang: "string",
+		}
+	}
 };
 
 const DatabaseContext = createRealmContext({
-	schema: [Card],
+	schema: [Card, Barcode, Settings],
 });
 
 const Database = {
@@ -40,26 +94,53 @@ const Database = {
 	useDatabase: DatabaseContext.useRealm,
 	useObject: DatabaseContext.useRealm,
 	useQuery: DatabaseContext.useQuery,
-	Card: Card
+	Card: Card,
+	Barcode: Barcode,
+	Settings: Settings,
 };
 
 declare namespace Database {
-	namespace Card {
-		type GenerateProps = {
-			title: string,
-			code: string,
-			format: string,
-			color: string,
-		};
+	type Object<T extends Realm.Object> = T;
 
-		type Schema = {
+	type BarcodeObject = Object<Barcode>;
+	namespace Barcode {
+		type GenerateProps = {
+			code: string;
+			format: string;
+			data: ArrayBuffer;
+		}
+
+		type Schema = GenerateProps & {
 			_id: Realm.BSON.ObjectId;
-			title: string,
-			code: string,
-			format: string,
-			color: string,
 		}
 	}
-};
+
+	type CardObject = Object<Card>;
+	namespace Card {
+		type GenerateProps = {
+			title: string;
+			code: string;
+			format: string;
+			color: string;
+			bid: Realm.BSON.ObjectId;
+		};
+
+		type Schema = GenerateProps & {
+			_id: Realm.BSON.ObjectId;
+		}
+	}
+
+	type SettingsObject = Object<Settings>;
+	namespace Settings {
+		type GenerateProps = {
+			theme: string;
+			lang: string;
+		}
+
+		type Schema = GenerateProps & {
+			_id: Realm.BSON.ObjectId;
+		}
+	}
+}
 
 export default Database;

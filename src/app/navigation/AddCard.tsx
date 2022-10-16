@@ -3,11 +3,13 @@ import {Dimensions, FlatList, ScaledSize, StyleSheet, View} from "react-native";
 import {Button, TextInput, MD3Theme, withTheme, Text, HelperText, Chip, Snackbar} from "react-native-paper";
 import ColorButton from "../components/colorbutton";
 import {ScanTypes} from "./Scan";
-import {StackProps} from "../types/Navigation";
+import {StackProps} from "../models/Navigation";
 import Database from "../models/Database";
-import {ColorPallette} from "../types/Colors";
-import BwipJs from "../types/BwipJs";
+import {ColorPallette} from "../models/Colors";
+import BwipJs from "../models/BwipJs";
 import {BarcodeTypes} from "../components/Barcode";
+import {BSON} from "realm";
+import Locale from "../locale";
 
 export type AddCardProps = StackProps<"AddCard"> & {
 	theme: MD3Theme,
@@ -19,7 +21,7 @@ type Error = {
 };
 
 const AddCard = ({theme, navigation, route}: AddCardProps) => {
-	const colorList = Object.entries(ColorPallette).map(([_, v]) => v.bg);
+	const colorList = Object.entries(ColorPallette).map(([, v]) => v.bg);
 	const [selColor, setSelColor] = React.useState<string>(colorList[0]);
 
 	const formatList: string[] = Object.values(ScanTypes.Str);
@@ -35,9 +37,10 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 	const [snackMsg, setSnackMsg] = React.useState<string>("");
 
 	const [colorListKey, setColorListKey] = React.useState<"colorListKey0" | "colorListKey1">("colorListKey0");
-	let dimension: ScaledSize = Dimensions.get("window");
+	const dimension = React.useRef<ScaledSize>(Dimensions.get("window"));
 
 	const db = Database.useDatabase();
+	const loc = Locale.useLocale();
 
 	React.useEffect(() => {
 		const unsubscribe = navigation.addListener("focus", () => {
@@ -58,24 +61,23 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 	}, [navigation, route]);
 
 	React.useEffect(() => {
-		dimension = Dimensions.get("window");
 		const listener = Dimensions.addEventListener("change", ({window}) => {
-			dimension = window;
+			dimension.current = window;
 			setColorListKey(colorListKey == "colorListKey0" ? "colorListKey1" : "colorListKey0");
 		});
 		return () => listener.remove();
-	}, [dimension, colorListKey]);
+	}, [colorListKey]);
 
 	const onAddPress = () => {
 		let errors = 0;
 
 		if (titleValue.length == 0) {
-			setTitleError({is: true, text: "Title is empty!"});
+			setTitleError({is: true, text: loc.t("titleError")});
 			errors++;
 		}
 
 		if (codeValue.length == 0) {
-			setCodeError({is: true, text: "Code is empty!"});
+			setCodeError({is: true, text: loc.t("codeError")});
 			errors++;
 		}
 
@@ -83,24 +85,46 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 			return;
 		}
 
-		try {
-			BwipJs.raw(BarcodeTypes[selFormat], codeValue);
-		} catch (err) {
-			const strError: string = err.toString();
-			const errorMsg = strError.split(":")[2].trim();
-			setSnackMsg(`Error: ${errorMsg}`);
-			setSnackVisible(true);
-			return;
+		let bid: Realm.BSON.ObjectId;
+		let barcode = db.objects(Database.Barcode).filtered(
+			`code == $0 && format == $1 LIMIT(1)`,
+			codeValue, selFormat
+		);
+
+		if (barcode.length > 0) {
+			bid = barcode[0]._id;
+		} else {
+			try {
+				const data = BwipJs.raw(BarcodeTypes[selFormat], codeValue)[0];
+				db.write(() => {
+					const obj = db.create(
+						Database.Barcode,
+						Database.Barcode.generate({
+							code: codeValue,
+							format: selFormat,
+							data: BSON.serialize(data),
+						})
+					);
+					bid = obj._id;
+				});
+			} catch (err) {
+				const strError: string = err.toString();
+				const errorMsg = strError.split(":")[1].trim();
+				setSnackMsg(`${loc.t("snackMsgLabel")}: ${errorMsg}`);
+				setSnackVisible(true);
+				return;
+			}
 		}
 
 		db.write(() => {
 			db.create(
-				"Card",
+				Database.Card,
 				Database.Card.generate({
 					title: titleValue,
 					code: codeValue,
 					format: selFormat,
-					color: selColor
+					color: selColor,
+					bid: bid,
 				})
 			);
 		});
@@ -142,7 +166,7 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 				<View style={styles.inputContainer}>
 					<TextInput
 						mode="outlined"
-						label="Title"
+						label={loc.t("titleLabel")}
 						onChangeText={onTitleChange}
 						error={titleError.is}
 					/>
@@ -151,7 +175,7 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 					</HelperText>
 					<TextInput
 						mode="outlined"
-						label="Code"
+						label={loc.t("codeLabel")}
 						onChangeText={onCodeChange}
 						error={codeError.is}
 						value={codeValue}
@@ -161,14 +185,17 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 					</HelperText>
 				</View>
 				<View style={styles.formatContainer}>
-					<Text style={styles.choose} variant="titleSmall">Choose format</Text>
+					<Text style={styles.choose} variant="titleSmall">{loc.t("chooseFormatLabel")}</Text>
 					<FlatList
 						numColumns={3}
 						data={formatData}
 						keyExtractor={item => `formatItem-${item.index}`}
+						columnWrapperStyle={{
+							justifyContent: "space-between"
+						}}
 						renderItem={({item}) => (
 							<Chip
-								style={styles.format}
+								style={selFormat === item.format ? styles.formatSelected : styles.format}
 								mode={selFormat === item.format ? "flat" : "outlined"}
 								onPress={() => setSelFormat(item.format)}
 							>
@@ -178,12 +205,16 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 					/>
 				</View>
 				<View style={styles.colorContainer}>
-					<Text style={styles.choose} variant="titleSmall">Choose color</Text>
-					<ColorButton.Group style={styles.colorGroup} color={selColor} onColorChange={(color) => setSelColor(color)}>
+					<Text style={styles.choose} variant="titleSmall">{loc.t("chooseColorLabel")}</Text>
+					<ColorButton.Group color={selColor} onColorChange={(color) => setSelColor(color)} >
 						<FlatList
 							key={colorListKey}
-							numColumns={Math.floor(dimension.width / 50)}
-							contentContainerStyle={styles.colorList}
+							numColumns={Math.floor(dimension.current.width / 46)}
+							getItemLayout={(_data, index) => ({
+								length: 46,
+								offset: 46 * index,
+								index: index
+							})}
 							data={colorData}
 							keyExtractor={(item) => `colorButton-${item.index}`}
 							renderItem={({item}) => (
@@ -202,14 +233,14 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 							});
 						}}
 					>
-						Scan
+						{loc.t("scanButton")}
 					</Button>
 					<Button
 						style={styles.addButton}
 						mode="contained"
 						onPress={onAddPress}
 					>
-						Add
+						{loc.t("addButton")}
 					</Button>
 				</View>
 			</View>
@@ -247,6 +278,10 @@ const styles = StyleSheet.create({
 		margin: 3,
 		flex: 1,
 	},
+	formatSelected: {
+		margin: 4,
+		flex: 1,
+	},
 	buttonContainer: {
 		marginTop: 6,
 		marginBottom: 6,
@@ -263,12 +298,6 @@ const styles = StyleSheet.create({
 	colorContainer: {
 		marginTop: 6,
 		marginBottom: 6,
-	},
-	colorGroup: {
-		alignItems: "center",
-	},
-	colorList: {
-		alignItems: "center",
 	},
 	colorButton: {
 		margin: 3,

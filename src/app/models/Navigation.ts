@@ -11,6 +11,7 @@ export type StackParamList = {
 	Scan: {
 		types: string[],
 	},
+	Settings: undefined,
 };
 
 export type StackProps<T extends keyof StackParamList> = StackScreenProps<StackParamList, T>;

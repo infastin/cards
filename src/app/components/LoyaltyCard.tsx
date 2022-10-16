@@ -2,6 +2,7 @@ import React from "react";
 import {Dimensions, Pressable, ScaledSize, StyleSheet, View} from "react-native";
 import {Card, Avatar, IconButton, Menu} from "react-native-paper";
 import Barcode from "../components/Barcode"
+import Locale from "../locale";
 
 export type LoyaltyCardProps = {
 	title: string;
@@ -37,6 +38,8 @@ const LoyaltyCard = ({title, code, format, bgColor, fgColor, ...props}: LoyaltyC
 		barcodeHeight = Math.round(0.2 * cardContentWidth);
 	}
 
+	const loc = Locale.useLocale();
+
 	return (
 		<View>
 			<Card style={[styles.card, {backgroundColor: bgColor}]}>
@@ -58,11 +61,11 @@ const LoyaltyCard = ({title, code, format, bgColor, fgColor, ...props}: LoyaltyC
 										<IconButton {...cardProps} iconColor={fgColor} icon="dots-vertical" onPress={() => setMenuVisible(true)} />
 									}
 								>
-									<Menu.Item leadingIcon="delete" title="Delete" onPress={() => {
+									<Menu.Item leadingIcon="delete" title={loc.t("LoyaltyCardDelete")} onPress={() => {
 										setMenuVisible(false);
 										props.onDelete();
 									}} />
-									<Menu.Item leadingIcon="content-copy" title="Copy code" onPress={() => {
+									<Menu.Item leadingIcon="content-copy" title={loc.t("LoyaltyCardCopy")} onPress={() => {
 										setMenuVisible(false);
 										props.onCopy();
 									}} />

@@ -3,7 +3,6 @@ import React from "react";
 
 export type ColorButtonContextType = {
 	color: string;
-	prevColor?: string;
 	onColorChange?: (color: string) => void;
 };
 

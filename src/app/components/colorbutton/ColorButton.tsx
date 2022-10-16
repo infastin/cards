@@ -1,9 +1,8 @@
 import {Animated, StyleProp, StyleSheet, View, ViewStyle} from "react-native";
-import React, {useRef, useState} from "react";
+import React from "react";
 import {MD3Theme, TouchableRipple, withTheme} from "react-native-paper";
 import {ColorButtonContext, ColorButtonContextType} from "./ColorButtonGroup";
 import {getRippleColor, getSelectionColor, isChecked} from "./utils";
-import Color from "color";
 
 export type ColorButtonProps = {
 	color: string;

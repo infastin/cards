@@ -1,6 +1,8 @@
 import {Svg, Rect} from 'react-native-svg';
 import React from 'react';
-import BwipJs from '../types/BwipJs';
+import BwipJs from '../models/BwipJs';
+import Database from '../models/Database';
+import {BSON} from 'realm';
 
 export const BarcodeTypes = {
 	CODE128: "code128",
@@ -25,12 +27,13 @@ type Rectangle = {
 };
 
 const Barcode = ({value, format = "CODE128"}: BarcodeProps) => {
+	const db = Database.useDatabase();
+
 	const getRectangles1D = (encoding: BwipJs.RawReturn): Rectangle[] => {
 		const unitWidth = 100 / encoding.sbs.reduce((pSum, number) => pSum + number, 0);
 
-		let rects = [];
+		const rects = [];
 		let x = 0
-		let y = 0
 
 		for (let i = 0; i < encoding.sbs.length; ++i) {
 			const barWidth = encoding.sbs[i];
@@ -38,7 +41,7 @@ const Barcode = ({value, format = "CODE128"}: BarcodeProps) => {
 			if (i % 2 != 0) {
 				rects.push({
 					x: x - unitWidth * barWidth,
-					y: y,
+					y: 0,
 					width: unitWidth * barWidth,
 					height: 100,
 				});
@@ -54,7 +57,7 @@ const Barcode = ({value, format = "CODE128"}: BarcodeProps) => {
 		const unitWidth = 100 / encoding.pixx;
 		const unitHeight = 100 / encoding.pixy;
 
-		let rects = [];
+		const rects = [];
 		let y = 0;
 
 		for (let j = 0; j < encoding.pixy; ++j) {
@@ -94,16 +97,37 @@ const Barcode = ({value, format = "CODE128"}: BarcodeProps) => {
 	};
 
 	const getRectangles = () => {
-		try {
-			const encoding = BwipJs.raw(BarcodeTypes[format], value)[0];
-			if (encoding.sbs) {
-				return getRectangles1D(encoding);
-			} else {
-				return getRectangles2D(encoding);
+		let encoding: BwipJs.RawReturn;
+		const barcode = db.objects(Database.Barcode).filtered(
+			`code == $0 && format == $1 LIMIT(1)`,
+			value, format
+		);
+
+		if (barcode.length > 0) {
+			encoding = BSON.deserialize(barcode[0].data) as BwipJs.RawReturn;
+		} else {
+			try {
+				encoding = BwipJs.raw(BarcodeTypes[format], value)[0];
+				db.write(() => {
+					db.create(
+						Database.Barcode,
+						Database.Barcode.generate({
+							code: value,
+							format: format,
+							data: BSON.serialize(encoding),
+						})
+					);
+				});
+			} catch (err) {
+				console.error(err);
+				return [];
 			}
-		} catch (err) {
-			console.error(err);
-			return [];
+		}
+
+		if (encoding.sbs) {
+			return getRectangles1D(encoding);
+		} else {
+			return getRectangles2D(encoding);
 		}
 	}
 
@@ -117,7 +141,7 @@ const Barcode = ({value, format = "CODE128"}: BarcodeProps) => {
 					fill="black"
 					x={rect.x + "%"}
 					y={rect.y + "%"}
-					width={rect.width + "%"}
+					width={(rect.width + 0.5) + "%"}
 					height={(rect.height + 0.5) + "%"}
 				/>
 			})}

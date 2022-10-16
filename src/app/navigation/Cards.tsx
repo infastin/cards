@@ -3,10 +3,11 @@ import {Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, SafeAreaV
 import {AnimatedFAB, MD3Theme, withTheme, Modal, Portal, MD3LightTheme} from "react-native-paper";
 import LoyaltyCard from "../components/LoyaltyCard";
 import Database from "../models/Database";
-import {StackProps} from "../types/Navigation";
+import {StackProps} from "../models/Navigation";
 import * as Clipboard from "expo-clipboard";
-import {ColorPalletteStr} from "../types/Colors";
+import {ColorPalletteStr} from "../models/Colors";
 import Barcode from "../components/Barcode";
+import Locale from "../locale";
 
 export type CardsProps = StackProps<"AddCard"> & {
 	theme: MD3Theme;
@@ -24,7 +25,7 @@ const Cards = ({navigation}: CardsProps) => {
 	const [dimension, setDimension] = React.useState<ScaledSize>(Dimensions.get("window"));
 
 	const [modalVisible, setModalVisible] = React.useState<boolean>(false);
-	const [modalBarcodeProps, setModalBarcodeProps] = React.useState<ModalBarcodeProps>(null as any);
+	const [modalBarcodeProps, setModalBarcodeProps] = React.useState<ModalBarcodeProps | null>(null);
 
 	React.useEffect(() => {
 		const listener = Dimensions.addEventListener("change", ({window}) => setDimension(window));
@@ -40,53 +41,56 @@ const Cards = ({navigation}: CardsProps) => {
 
 	const db = Database.useDatabase();
 	const cardsData = Database.useQuery(Database.Card);
+	const loc = Locale.useLocale();
 
 	return (
 		<SafeAreaView style={styles.container}>
 			<FlatList
-				contentContainerStyle={styles.cards}
+				contentContainerStyle={{paddingVertical: 12}}
 				onScroll={onScroll}
 				data={cardsData}
 				keyExtractor={card => card._id.toString()}
 				renderItem={({item}) => (
-					<LoyaltyCard
-						title={item.title}
-						code={item.code}
-						format={item.format}
-						bgColor={item.color}
-						fgColor={ColorPalletteStr[item.color].fg.onSurface}
-						onCopy={async () => await Clipboard.setStringAsync(item.code)}
-						onDelete={() => {
-							db.write(() => {
-								db.delete(db.objectForPrimaryKey("Card", item._id));
-							});
-						}}
-						onPress={() => {
-							let barcodeWidth: number;
-							let barcodeHeight: number;
+					<View style={{paddingHorizontal: 12}}>
+						<LoyaltyCard
+							title={item.title}
+							code={item.code}
+							format={item.format}
+							bgColor={item.color}
+							fgColor={ColorPalletteStr[item.color].fg.onSurface}
+							onCopy={async () => await Clipboard.setStringAsync(item.code)}
+							onDelete={() => {
+								db.write(() => {
+									db.delete(db.objectForPrimaryKey(Database.Card, item._id));
+								});
+							}}
+							onPress={() => {
+								let barcodeWidth: number;
+								let barcodeHeight: number;
 
-							if (item.format === "QR") {
-								barcodeWidth = Math.round(0.4 * modalHeight);
-								barcodeHeight = barcodeWidth;
-							} else {
-								barcodeWidth = Math.round(0.8 * modalHeight);
-								barcodeHeight = Math.round(0.3 * modalHeight);
-							}
+								if (item.format === "QR") {
+									barcodeWidth = Math.round(0.4 * modalHeight);
+									barcodeHeight = barcodeWidth;
+								} else {
+									barcodeWidth = Math.round(0.8 * modalHeight);
+									barcodeHeight = Math.round(0.3 * modalHeight);
+								}
 
-							setModalBarcodeProps({
-								code: item.code,
-								format: item.format,
-								width: barcodeWidth,
-								height: barcodeHeight,
-							});
-							setModalVisible(true);
-						}}
-					/>
+								setModalBarcodeProps({
+									code: item.code,
+									format: item.format,
+									width: barcodeWidth,
+									height: barcodeHeight,
+								});
+								setModalVisible(true);
+							}}
+						/>
+					</View>
 				)}
 			/>
 			<AnimatedFAB
-				icon={'plus'}
-				label={'Add'}
+				icon={"plus"}
+				label={loc.t("AddFB")}
 				extended={onTop}
 				onPress={() => navigation.navigate("AddCard")}
 				animateFrom="right"
@@ -125,9 +129,6 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		flexGrow: 1,
-	},
-	cards: {
-		padding: 12,
 	},
 	add: {
 		bottom: 16,

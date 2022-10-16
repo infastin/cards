@@ -3,33 +3,40 @@ import {StyleSheet} from 'react-native';
 import {Appbar, Menu} from 'react-native-paper';
 import {getHeaderTitle} from '@react-navigation/elements';
 import {StackHeaderProps} from '@react-navigation/stack';
+import Locale from '../locale';
 
 const Header = ({options, route, navigation, back}: StackHeaderProps) => {
 	const [visible, setVisible] = useState(false);
-	const title = getHeaderTitle(options, route.name)
+	const name = getHeaderTitle(options, route.name);
+	const loc = Locale.useLocale();
+	const title = loc.t(name);
 
 	return (
 		<Appbar.Header
 			mode="small"
 			statusBarHeight={0}
-			style={title === "Scan" ? styles.headerScan : undefined}
+			style={name === "Scan" ? styles.headerScan : undefined}
 		>
 			{back && <Appbar.BackAction
-				color={title === "Scan" ? "#ffffff" : undefined}
+				color={name === "Scan" ? "#ffffff" : undefined}
 				onPress={() => navigation.goBack()}
 			/>}
-			<Appbar.Content color={title === "Scan" ? "#ffffff" : undefined} title={title} />
+			<Appbar.Content color={name === "Scan" ? "#ffffff" : undefined} title={title} />
 			<Menu
 				visible={visible}
 				onDismiss={() => setVisible(false)}
-				anchor={<Appbar.Action
-					color={title === "Scan" ? "#ffffff" : undefined}
+				anchor={(name === "Cards" || name === "AddCard") && <Appbar.Action
 					icon="dots-vertical"
 					onPress={() => setVisible(true)}
 				/>}
 			>
-				<Menu.Item title="Settings" onPress={() => console.log("Settings")} />
-				<Menu.Item title="About" onPress={() => console.log("About")} />
+				<Menu.Item title={loc.t("HeaderMenuSettings")} onPress={() => {
+					setVisible(false);
+					navigation.navigate("Settings");
+				}} />
+				<Menu.Item title={loc.t("HeaderMenuAbout")} onPress={() => {
+					setVisible(false);
+				}} />
 			</Menu>
 
 		</Appbar.Header>
