@@ -1,0 +1,18 @@
+{
+	"en-US": {
+		"licenseTitle": "License",
+		"versionTitle": "Version",
+		"thirdpartyTitle": "Thirdparty licenses",
+		"sourceTitle": "Source",
+		"iconTitle": "Icon",
+		"iconCreatedBy": "Application icon is created by"
+	},
+	"ru-RU": {
+		"licenseTitle": "Лицензия",
+		"versionTitle": "Версия",
+		"thirdpartyTitle": "Сторонние лицензии",
+		"sourceTitle": "Исходный код",
+		"iconTitle": "Иконка",
+		"iconCreatedBy": "Иконка приложения создана"
+	}
+}

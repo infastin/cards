@@ -1,14 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
-
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import React from 'react';
 import Header from './src/app/components/Header';
@@ -16,11 +5,13 @@ import Cards from './src/app/navigation/Cards';
 import AddCard from './src/app/navigation/AddCard';
 import {StackParamList} from './src/app/models/Navigation';
 import Scan from './src/app/navigation/Scan';
-import {Settings} from './src/app/navigation/Settings';
+import Settings from './src/app/navigation/Settings';
 import {DarkTheme, LightTheme, PaperProvider, NavigationContainer} from './src/app/models/Theme';
 import {Appearance} from 'react-native';
 import Locale from './src/app/locale';
 import Database from './src/app/models/Database';
+import About from './src/app/navigation/About';
+import Licenses from './src/app/navigation/Licenses';
 
 const App = () => {
 	const db = Database.useDatabase();
@@ -69,7 +60,9 @@ const App = () => {
 							}}
 						/>
 						<Stack.Screen name="Scan" component={Scan} />
+						<Stack.Screen name="About" component={About} />
 						<Stack.Screen name="Settings" component={Settings} />
+						<Stack.Screen name="Licenses" component={Licenses} />
 					</Stack.Navigator>
 				</NavigationContainer>
 			</Locale.Provider>

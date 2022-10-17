@@ -1,26 +1,32 @@
 import React, {useContext, useState} from 'react';
 import {I18n} from 'i18n-js';
 import * as Localization from 'expo-localization';
-import Routes from './Routes';
-import AddCard from './AddCard';
-import Cards from './Cards';
-import LoyaltyCard from './LoyaltyCard';
-import Header from './Header';
-import merge from 'deepmerge';
-import Scan from './Scan';
-import Settings from './Settings';
-
-const Languages = {
-	"en-US": "English",
-	"ru-RU": "Русский",
-};
+import preval from 'babel-plugin-preval/macro';
 
 export type LocaleProviderProps = {
 	locale: string;
 	children?: React.ReactNode,
 };
 
-const translations = merge.all([Routes, Cards, AddCard, LoyaltyCard, Header, Scan, Settings]);
+const Languages = {
+	"en-US": "English",
+	"ru-RU": "Русский",
+};
+
+const translations = preval`
+	const AddCard = require('./AddCard.json');
+	const Cards = require('./Cards.json');
+	const LoyaltyCard = require('./LoyaltyCard.json');
+	const Header = require('./Header.json');
+	const Scan = require('./Scan.json');
+	const Settings = require('./Settings.json');
+	const Errors = require('./Errors.json');
+	const About = require('./About.json');
+	const Routes = require('./Routes.json');
+	const merge = require('deepmerge');
+	module.exports = merge.all([AddCard, Cards, LoyaltyCard, Header, Scan, Settings, Errors, About, Routes]);
+`;
+
 const i18n = new I18n(translations);
 
 i18n.defaultLocale = "en-US";

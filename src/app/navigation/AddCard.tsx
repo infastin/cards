@@ -10,6 +10,7 @@ import BwipJs from "../models/BwipJs";
 import {BarcodeTypes} from "../components/Barcode";
 import {BSON} from "realm";
 import Locale from "../locale";
+import {writeCard, Exception} from "../models/DatabaseWrite";
 
 export type AddCardProps = StackProps<"AddCard"> & {
 	theme: MD3Theme,
@@ -85,49 +86,20 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 			return;
 		}
 
-		let bid: Realm.BSON.ObjectId;
-		let barcode = db.objects(Database.Barcode).filtered(
-			`code == $0 && format == $1 LIMIT(1)`,
-			codeValue, selFormat
-		);
-
-		if (barcode.length > 0) {
-			bid = barcode[0]._id;
-		} else {
-			try {
-				const data = BwipJs.raw(BarcodeTypes[selFormat], codeValue)[0];
-				db.write(() => {
-					const obj = db.create(
-						Database.Barcode,
-						Database.Barcode.generate({
-							code: codeValue,
-							format: selFormat,
-							data: BSON.serialize(data),
-						})
-					);
-					bid = obj._id;
-				});
-			} catch (err) {
-				const strError: string = err.toString();
-				const errorMsg = strError.split(":")[1].trim();
-				setSnackMsg(`${loc.t("snackMsgLabel")}: ${errorMsg}`);
-				setSnackVisible(true);
-				return;
-			}
+		try {
+			writeCard({
+				db: db,
+				code: codeValue,
+				format: selFormat,
+				title: titleValue,
+				color: selColor,
+			});
+		} catch (err) {
+			const error: Exception = err;
+			setSnackMsg(`${loc.t("errorLabel")}: ${loc.t(error.msg)}`);
+			setSnackVisible(true);
+			return;
 		}
-
-		db.write(() => {
-			db.create(
-				Database.Card,
-				Database.Card.generate({
-					title: titleValue,
-					code: codeValue,
-					format: selFormat,
-					color: selColor,
-					bid: bid,
-				})
-			);
-		});
 
 		navigation.navigate("Cards");
 	};

@@ -12,6 +12,8 @@ export type StackParamList = {
 		types: string[],
 	},
 	Settings: undefined,
+	About: undefined,
+	Licenses: undefined,
 };
 
 export type StackProps<T extends keyof StackParamList> = StackScreenProps<StackParamList, T>;

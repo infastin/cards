@@ -36,6 +36,7 @@ const Header = ({options, route, navigation, back}: StackHeaderProps) => {
 				}} />
 				<Menu.Item title={loc.t("HeaderMenuAbout")} onPress={() => {
 					setVisible(false);
+					navigation.navigate("About");
 				}} />
 			</Menu>
 

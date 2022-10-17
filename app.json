@@ -1,36 +1,28 @@
 {
   "expo": {
-    "name": "Cards",
+    "name": "Loyalty Cards",
     "slug": "cards",
     "owner": "infastin",
     "version": "1.0.0",
+	"sdkVersion": "46.0.0",
+	"platforms": ["android"],
+	"githubUrl": "https://github.com/infastin/cards",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "entryPoint": "./index.tsx",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.anonymous.Cards"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+      "package": "com.github.infastin.cards"
     },
     "extra": {
       "eas": {

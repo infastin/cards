@@ -1,0 +1,18 @@
+{
+	"en-US": {
+		"Cards": "Home",
+		"AddCard": "Add",
+		"Scan": "Scan",
+		"Settings": "Settings",
+		"About": "About",
+		"Licenses": "Thirdparty licenses"
+	},
+	"ru-RU": {
+		"Cards": "Карты",
+		"AddCard": "Добавить",
+		"Scan": "Сканировать",
+		"Settings": "Настройки",
+		"About": "О приложении",
+		"Licenses": "Сторонние лицензии"
+	}
+}

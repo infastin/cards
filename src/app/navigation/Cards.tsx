@@ -14,10 +14,11 @@ export type CardsProps = StackProps<"AddCard"> & {
 };
 
 type ModalBarcodeProps = {
-	code: string,
-	format: string,
-	width: number,
-	height: number,
+	code: string;
+	format: string;
+	width: number;
+	height: number;
+	transform: boolean;
 };
 
 const Cards = ({navigation}: CardsProps) => {
@@ -67,13 +68,16 @@ const Cards = ({navigation}: CardsProps) => {
 							onPress={() => {
 								let barcodeWidth: number;
 								let barcodeHeight: number;
+								let transform: boolean;
 
 								if (item.format === "QR") {
 									barcodeWidth = Math.round(0.4 * modalHeight);
 									barcodeHeight = barcodeWidth;
+									transform = false;
 								} else {
 									barcodeWidth = Math.round(0.8 * modalHeight);
 									barcodeHeight = Math.round(0.3 * modalHeight);
+									transform = true;
 								}
 
 								setModalBarcodeProps({
@@ -81,6 +85,7 @@ const Cards = ({navigation}: CardsProps) => {
 									format: item.format,
 									width: barcodeWidth,
 									height: barcodeHeight,
+									transform: transform,
 								});
 								setModalVisible(true);
 							}}
@@ -108,7 +113,7 @@ const Cards = ({navigation}: CardsProps) => {
 					<View style={{justifyContent: "center", alignItems: "center"}}>
 						{modalBarcodeProps &&
 							<View style={{
-								transform: [{rotate: "90deg"}],
+								transform: modalBarcodeProps.transform ? [{rotate: "90deg"}] : undefined,
 								width: modalBarcodeProps.width,
 								height: modalBarcodeProps.height
 							}}>

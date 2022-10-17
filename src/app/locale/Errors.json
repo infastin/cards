@@ -1,0 +1,48 @@
+{
+	"en-US": {
+		"errorLabel": "Error",
+		"array-marker-not-found": "Array marker not found",
+		"dict-marker-not-found": "Dict marker not found",
+		"bwipp": {
+			"ean13badLength": "EAN-13 must be 12 or 13 digits",
+			"ean13badCharacter": "EAN-13 must contain only digits",
+			"ean13badAddOnLength": "Add-on for EAN-13 must be 2 or 5 digits",
+			"ean13badCheckDigit": "Incorrect EAN-13 check digit provided",
+			"ean8badLength": "EAN-8 must be 7 or 8 digits",
+			"ean8badCharacter": "EAN-8 must contain only digits",
+			"ean8badAddOnLength": "Add-on for EAN-8 must be 2 or 5 digits",
+			"ean8badCheckDigit": "Incorrect EAN-8 check digit provided",
+			"code39badCharacter": "Incorrect CODE 39 code",
+			"code39badCheckDigit": "Incorrect CODE 39 check digit provided",
+			"symbolUnknownSymbol": "Unknown symbol provided",
+			"pdf417badECI": "PDF417 supports ECIs 000000 to 811799",
+			"pdf417insufficientCapacity": "Insufficient capacity in the symbol",
+			"qrcodeNoValidSymbol": "Maximum length exceeded or invalid content"
+		},
+		"dbBadWrite": "Couldn't write data",
+		"invalidFile": "Invalid file"
+	},
+	"ru-RU": {
+		"errorLabel": "Ошибка",
+		"array-marker-not-found": "Метка массива не найдена",
+		"dict-marker-not-found": "Метка словаря не найдена",
+		"bwipp": {
+			"ean13badLength": "EAN-13 должен содержать 12 или 13 цифр",
+			"ean13badCharacter": "EAN-13 должен содержать только цифры",
+			"ean13badAddOnLength": "Дополнение для EAN-13 должно содержать 2 или 5 цифр",
+			"ean13badCheckDigit": "Предоставлена некорректная контрольная цифра",
+			"ean8badLength": "EAN-8 должен содержать 7 или 8 цифр",
+			"ean8badCharacter": "EAN-8 должен содержать только цифры",
+			"ean8badAddOnLength": "Дополнение для EAN-8 должно содержать 2 или 5 цифр",
+			"ean8badCheckDigit": "Предоставлена некорректная контрольная цифра",
+			"code39badCharacter": "Некорректное значение CODE 39",
+			"code39badCheckDigit": "Предоставлена некорректная контрольная цифра",
+			"symbolUnknownSymbol": "Предоставлен неизвестный символ",
+			"pdf417badECI": "PDF417 поддерживает ECI от 000000 до 811799",
+			"pdf417insufficientCapacity": "Недостаточная вместимость символа",
+			"qrcodeNoValidSymbol": "Предоставлено недопустимое значение"
+		},
+		"dbBadWrite": "Не получилось записать данные",
+		"invalidFile": "Недопустимый файл"
+	}
+}
