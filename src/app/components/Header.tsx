@@ -14,7 +14,6 @@ const Header = ({options, route, navigation, back}: StackHeaderProps) => {
 	return (
 		<Appbar.Header
 			mode="small"
-			statusBarHeight={0}
 			style={name === "Scan" ? styles.headerScan : undefined}
 		>
 			{back && <Appbar.BackAction

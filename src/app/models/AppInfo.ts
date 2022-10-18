@@ -8,7 +8,7 @@ export default {
 	name: app.name,
 	pkgName: app.android.package,
 	icon: require("../../../assets/icon.png"),
-	iconAuthor: "Flat-Icons-com",
-	iconAuthorUrl: "https://www.flaticon.com/authors/flat-icons-com",
+	iconAuthor: "smashingstocks",
+	iconAuthorUrl: "https://www.flaticon.com/authors/smashingstocks",
 	licenseText: raw("../../../LICENSE"),
 };

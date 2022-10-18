@@ -7,7 +7,7 @@ import {StackParamList} from './src/app/models/Navigation';
 import Scan from './src/app/navigation/Scan';
 import Settings from './src/app/navigation/Settings';
 import {DarkTheme, LightTheme, PaperProvider, NavigationContainer} from './src/app/models/Theme';
-import {Appearance} from 'react-native';
+import {Appearance, StatusBar} from 'react-native';
 import Locale from './src/app/locale';
 import Database from './src/app/models/Database';
 import About from './src/app/navigation/About';
