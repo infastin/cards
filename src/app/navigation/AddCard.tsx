@@ -6,9 +6,6 @@ import {ScanTypes} from "./Scan";
 import {StackProps} from "../models/Navigation";
 import Database from "../models/Database";
 import {ColorPallette} from "../models/Colors";
-import BwipJs from "../models/BwipJs";
-import {BarcodeTypes} from "../components/Barcode";
-import {BSON} from "realm";
 import Locale from "../locale";
 import {writeCard, Exception} from "../models/DatabaseWrite";
 

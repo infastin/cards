@@ -63,7 +63,7 @@ const About = ({navigation}: StackProps<"About">) => {
 					onDismiss={() => setDialogVisible(false)}
 				>
 					<Dialog.Title>{loc.t("licenseTitle")}</Dialog.Title>
-					<Dialog.ScrollArea style={{height: "60%"}}>
+					<Dialog.ScrollArea style={{maxHeight: "60%"}}>
 						<ScrollView contentContainerStyle={{paddingVertical: 20}}>
 							<Text>{AppInfo.licenseText}</Text>
 						</ScrollView>
