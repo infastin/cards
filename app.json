@@ -1,33 +1,33 @@
 {
-  "expo": {
-    "name": "Loyalty Cards",
-    "slug": "cards",
-    "owner": "infastin",
-    "version": "1.0.0",
-	"sdkVersion": "46.0.0",
-	"platforms": ["android"],
-	"githubUrl": "https://github.com/infastin/cards",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
-    "entryPoint": "./index.tsx",
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#FFFFFF"
-      },
-      "package": "com.github.infastin.cards"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "091befdc-64d5-4483-8bdb-ce5899fe1638"
-      }
-    }
-  }
+	"expo": {
+		"name": "Loyalty Cards",
+		"slug": "cards",
+		"owner": "infastin",
+		"version": "1.0.0",
+		"sdkVersion": "46.0.0",
+		"platforms": ["android"],
+		"githubUrl": "https://github.com/infastin/cards",
+		"orientation": "portrait",
+		"icon": "./assets/icon.png",
+		"userInterfaceStyle": "automatic",
+		"entryPoint": "./index.tsx",
+		"updates": {
+			"fallbackToCacheTimeout": 0
+		},
+		"assetBundlePatterns": [
+			"**/*"
+		],
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/icon.png",
+				"backgroundColor": "#FFFFFF"
+			},
+			"package": "com.github.infastin.cards"
+		},
+		"extra": {
+			"eas": {
+				"projectId": "091befdc-64d5-4483-8bdb-ce5899fe1638"
+			}
+		}
+	}
 }
