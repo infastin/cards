@@ -11,6 +11,7 @@ import {BSON} from "realm";
 import Intent from "../models/Intent";
 import RNFS from "react-native-fs";
 import {Exception, writeManyCards} from "../models/DatabaseWrite";
+import {Buffer} from 'buffer';
 
 export type SettingsProps = StackProps<"Settings"> & {
 	theme: MD3Theme,
@@ -60,7 +61,7 @@ const Settings = ({theme}: SettingsProps) => {
 		let data: string;
 		switch (format) {
 			case "bson":
-				data = BSON.serialize(cards).toString();
+				data = BSON.serialize(cards).toString("base64");
 				break;
 			default:
 			case "json":
@@ -127,8 +128,8 @@ const Settings = ({theme}: SettingsProps) => {
 					cards = JSON.parse(data);
 				} catch {
 					try {
-						const cardsBSON = BSON.deserialize(Uint8Array.from(Array.from(data, (v) => v.charCodeAt(0))));
-						cards = Object.values(cardsBSON);
+						const cardsBson = BSON.deserialize(Buffer.from(data, "base64"));
+						cards = Object.values(cardsBson);
 					} catch {
 						setSnackMsg(`${loc.t("errorLabel")}: ${loc.t("invalidFile")}`)
 						setSnackVisible(true);
