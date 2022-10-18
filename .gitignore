@@ -74,4 +74,7 @@ buck-out/
 web-build/
 dist/
 
+# EAS
+credentials.json
+
 # @end expo-cli

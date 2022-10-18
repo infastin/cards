@@ -141,8 +141,8 @@ const Barcode = ({value, format = "CODE128"}: BarcodeProps) => {
 					fill="black"
 					x={rect.x + "%"}
 					y={rect.y + "%"}
-					width={(rect.width + 0.5) + "%"}
-					height={(rect.height + 0.5) + "%"}
+					width={(rect.width + 0.15) + "%"}
+					height={(rect.height + 0.15) + "%"}
 				/>
 			})}
 		</Svg>
