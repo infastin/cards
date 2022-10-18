@@ -27,8 +27,6 @@
     "expo-clipboard": "~3.1.0",
     "expo-intent-launcher": "https://github.com/infastin/expo-intent-launcher",
     "expo-localization": "~13.1.0",
-	"expo-splash-screen": "~0.16.2",
-	"expo-status-bar": "~1.4.0",
     "i18n-js": "^4.1.1",
     "jsbarcode": "^3.11.5",
     "node": "16.17.1",
