@@ -1,4 +1,4 @@
-import {StackScreenProps} from "@react-navigation/stack";
+import { StackScreenProps } from "@react-navigation/stack";
 
 export type StackParamList = {
 	Cards: undefined,

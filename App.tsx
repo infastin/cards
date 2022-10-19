@@ -1,13 +1,13 @@
-import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import React from 'react';
 import Header from './src/app/components/Header';
 import Cards from './src/app/navigation/Cards';
 import AddCard from './src/app/navigation/AddCard';
-import {StackParamList} from './src/app/models/Navigation';
+import { StackParamList } from './src/app/models/Navigation';
 import Scan from './src/app/navigation/Scan';
 import Settings from './src/app/navigation/Settings';
-import {DarkTheme, LightTheme, PaperProvider, NavigationContainer} from './src/app/models/Theme';
-import {Appearance} from 'react-native';
+import { DarkTheme, LightTheme, PaperProvider, NavigationContainer } from './src/app/models/Theme';
+import { Appearance } from 'react-native';
 import Locale from './src/app/locale';
 import Database from './src/app/models/Database';
 import About from './src/app/navigation/About';

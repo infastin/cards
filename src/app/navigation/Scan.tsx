@@ -1,11 +1,11 @@
-import {BarCodeScanner, BarCodeScannerResult} from "expo-barcode-scanner";
-import Svg, {Defs, Mask, Rect} from "react-native-svg";
+import { BarCodeScanner, BarCodeScannerResult } from "expo-barcode-scanner";
+import Svg, { Defs, Mask, Rect } from "react-native-svg";
 import React from "react";
-import {Camera, CameraType} from "expo-camera";
-import {ScaledSize, Dimensions, View, StyleSheet} from "react-native";
-import {Text} from "react-native-paper";
-import {StackProps} from "../models/Navigation";
-import {MD3Theme} from "react-native-paper/lib/typescript/types";
+import { Camera, CameraType } from "expo-camera";
+import { ScaledSize, Dimensions, View, StyleSheet } from "react-native";
+import { Text } from "react-native-paper";
+import { StackProps } from "../models/Navigation";
+import { MD3Theme } from "react-native-paper/lib/typescript/types";
 import Locale from "../locale";
 
 const ScanTypesCodes = {
@@ -36,7 +36,7 @@ export type ScanProps = StackProps<"Scan"> & {
 	theme: MD3Theme,
 };
 
-const Scan = ({navigation, route}: ScanProps) => {
+const Scan = ({ navigation, route }: ScanProps) => {
 	const [hasPermission, setHasPermission] = React.useState<boolean>(false);
 	const [dimension, setDimension] = React.useState<ScaledSize>(Dimensions.get("window"));
 
@@ -48,7 +48,7 @@ const Scan = ({navigation, route}: ScanProps) => {
 	}, []);
 
 	React.useEffect(() => {
-		const listener = Dimensions.addEventListener("change", ({window}) => setDimension(window));
+		const listener = Dimensions.addEventListener("change", ({ window }) => setDimension(window));
 		return () => listener.remove();
 	}, []);
 
@@ -57,8 +57,8 @@ const Scan = ({navigation, route}: ScanProps) => {
 			return;
 		}
 
-		const wTopLeft = {x: Math.floor(0.1 * dimension.width), y: Math.floor(0.2 * dimension.height)};
-		const wBottomRight = {x: Math.floor(0.9 * dimension.width), y: Math.floor(0.5 * dimension.height)};
+		const wTopLeft = { x: Math.floor(0.1 * dimension.width), y: Math.floor(0.2 * dimension.height) };
+		const wBottomRight = { x: Math.floor(0.9 * dimension.width), y: Math.floor(0.5 * dimension.height) };
 		const topLeft = result.cornerPoints[0];
 		const bottomRight = result.cornerPoints[2];
 

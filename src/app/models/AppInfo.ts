@@ -1,4 +1,4 @@
-import {expo as app} from "../../../app.json";
+import { expo as app } from "../../../app.json";
 import raw from "raw.macro";
 
 export default {
