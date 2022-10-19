@@ -1,30 +1,30 @@
 import React from "react";
-import { MD3Theme } from "react-native-paper/lib/typescript/types";
-import { Button, Dialog, List, Menu, Portal, Snackbar, TextInput, TouchableRipple, Text, withTheme } from "react-native-paper";
+import {MD3Theme} from "react-native-paper/lib/typescript/types";
+import {Button, Dialog, List, Menu, Portal, Snackbar, TextInput, TouchableRipple, Text, withTheme} from "react-native-paper";
 import Locale from "../locale";
-import { StackProps } from "../models/Navigation";
-import { FlatList, LayoutRectangle, SafeAreaView, ScrollView, View, StyleSheet } from "react-native";
+import {StackProps} from "../models/Navigation";
+import {FlatList, LayoutRectangle, SafeAreaView, ScrollView, View, StyleSheet} from "react-native";
 import Database from "../models/Database";
 import dayjs from "dayjs";
 import * as IntentLauncher from 'expo-intent-launcher';
-import { BSON } from "realm";
+import {BSON} from "realm";
 import Intent from "../models/Intent";
 import RNFS from "react-native-fs";
-import { Exception, writeManyCards } from "../models/DatabaseWrite";
-import { Buffer } from 'buffer';
+import {Exception, writeManyCards} from "../models/DatabaseWrite";
+import {Buffer} from 'buffer';
 
 export type SettingsProps = StackProps<"Settings"> & {
 	theme: MD3Theme,
 };
 
-const Settings = ({ theme }: SettingsProps) => {
+const Settings = ({theme}: SettingsProps) => {
 	const [langDialogVisible, setLangDialogVisible] = React.useState<boolean>(false);
 	const [themeDialogVisible, setThemeDialogVisible] = React.useState<boolean>(false);
 	const [exportDialogVisible, setExportDialogVisible] = React.useState<boolean>(false);
 
 	const [exportMenuVisible, setExportMenuVisible] = React.useState<boolean>(false);
-	const [exportIconLayout, setExportIconLayout] = React.useState<LayoutRectangle>({ x: 0, y: 0, width: 0, height: 0 });
-	const [exportTextLayout, setExportTextLayout] = React.useState<LayoutRectangle>({ x: 0, y: 0, width: 0, height: 0 });
+	const [exportIconLayout, setExportIconLayout] = React.useState<LayoutRectangle>({x: 0, y: 0, width: 0, height: 0});
+	const [exportTextLayout, setExportTextLayout] = React.useState<LayoutRectangle>({x: 0, y: 0, width: 0, height: 0});
 	const [exportIconName, setExportIconName] = React.useState<string>("menu-down");
 
 	const [snackVisible, setSnackVisible] = React.useState<boolean>(false);
@@ -53,7 +53,7 @@ const Settings = ({ theme }: SettingsProps) => {
 	const db = Database.useDatabase();
 	const settings = Database.useQuery(Database.Settings)[0];
 
-	const exportCards = ({ format, share }: { format: string, share: boolean }) => {
+	const exportCards = ({format, share}: {format: string, share: boolean}) => {
 		const date = dayjs().format("YYYYMMDD-HHmmss");
 		const exportFilename = `Cards-${date}.${format}`;
 		const cards = db.objects(Database.Card);
@@ -141,7 +141,7 @@ const Settings = ({ theme }: SettingsProps) => {
 				}
 
 				try {
-					writeManyCards({ db, cards });
+					writeManyCards({db, cards});
 				} catch (err) {
 					const error: Exception = err;
 					setSnackMsg(`${loc.t("errorLabel")}: ${loc.t(error.msg)}`);
@@ -156,7 +156,7 @@ const Settings = ({ theme }: SettingsProps) => {
 		setExportIconName("menu-up");
 	};
 
-	const exportMenuHide = (opts: { label: string, value: string } | undefined) => {
+	const exportMenuHide = (opts: {label: string, value: string} | undefined) => {
 		if (opts) {
 			setExportFormat(opts);
 		}
@@ -211,7 +211,7 @@ const Settings = ({ theme }: SettingsProps) => {
 				</ScrollView>
 			</SafeAreaView>
 			<Snackbar
-				style={{ backgroundColor: theme.colors.errorContainer }}
+				style={{backgroundColor: theme.colors.errorContainer}}
 				visible={snackVisible}
 				duration={3500}
 				onDismiss={() => {
@@ -219,7 +219,7 @@ const Settings = ({ theme }: SettingsProps) => {
 					setSnackMsg("");
 				}}
 			>
-				<Text style={{ color: theme.colors.onErrorContainer }}>{snackMsg}</Text>
+				<Text style={{color: theme.colors.onErrorContainer}}>{snackMsg}</Text>
 			</Snackbar>
 			<Portal>
 				<Dialog
@@ -227,11 +227,11 @@ const Settings = ({ theme }: SettingsProps) => {
 					onDismiss={() => setLangDialogVisible(false)}
 				>
 					<Dialog.Title>{loc.t("settingsLang")}</Dialog.Title>
-					<Dialog.ScrollArea style={{ height: "60%" }}>
+					<Dialog.ScrollArea style={{height: "60%"}}>
 						<FlatList
 							data={langDataList}
 							keyExtractor={item => item[0]}
-							renderItem={({ item }) => (
+							renderItem={({item}) => (
 								<List.Item
 									title={item[1]}
 									onPress={() => {
@@ -250,11 +250,11 @@ const Settings = ({ theme }: SettingsProps) => {
 					onDismiss={() => setThemeDialogVisible(false)}
 				>
 					<Dialog.Title>{loc.t("settingsTheme")}</Dialog.Title>
-					<Dialog.ScrollArea style={{ height: "60%" }}>
+					<Dialog.ScrollArea style={{height: "60%"}}>
 						<FlatList
 							data={themeDataList}
 							keyExtractor={item => item[0]}
-							renderItem={({ item }) => (
+							renderItem={({item}) => (
 								<List.Item
 									title={item[1]}
 									onPress={() => {
@@ -279,7 +279,7 @@ const Settings = ({ theme }: SettingsProps) => {
 							onDismiss={() => exportMenuHide(undefined)}
 							anchor={
 								<View
-									style={{ backgroundColor: theme.colors.surface }}
+									style={{backgroundColor: theme.colors.surface}}
 									onLayout={(e) => setExportTextLayout(e.nativeEvent.layout)}
 								>
 									<TouchableRipple onPress={exportMenuShow}>
@@ -287,7 +287,7 @@ const Settings = ({ theme }: SettingsProps) => {
 											editable={false}
 											label={loc.t("settingsExportFormat")}
 											value={exportFormat.label}
-											style={{ backgroundColor: "transparent" }}
+											style={{backgroundColor: "transparent"}}
 											right={
 												<TextInput.Icon
 													icon={exportIconName}
@@ -304,10 +304,10 @@ const Settings = ({ theme }: SettingsProps) => {
 								marginTop: exportIconLayout.height,
 							}}
 						>
-							{exportFormats.map(({ label, value }, index) => (
+							{exportFormats.map(({label, value}, index) => (
 								<List.Item
 									key={index}
-									onPress={() => exportMenuHide({ label, value })}
+									onPress={() => exportMenuHide({label, value})}
 									title={label}
 								/>
 							))}
@@ -316,14 +316,14 @@ const Settings = ({ theme }: SettingsProps) => {
 							<Button
 								mode="outlined"
 								style={styles.menuExportShare}
-								onPress={() => exportCards({ format: exportFormat.value, share: true })}
+								onPress={() => exportCards({format: exportFormat.value, share: true})}
 							>
 								{loc.t("settingsExportShare")}
 							</Button>
 							<Button
 								mode="contained"
 								style={styles.menuExportSave}
-								onPress={() => exportCards({ format: exportFormat.value, share: false })}
+								onPress={() => exportCards({format: exportFormat.value, share: false})}
 							>
 								{loc.t("settingsExportSave")}
 							</Button>

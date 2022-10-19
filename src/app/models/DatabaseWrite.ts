@@ -1,7 +1,7 @@
 import Database from "./Database";
-import Realm, { BSON } from "realm";
+import Realm, {BSON} from "realm";
 import BwipJs from "./BwipJs";
-import { BarcodeTypes } from "../components/Barcode";
+import {BarcodeTypes} from "../components/Barcode";
 
 export class Exception {
 	msg: string;
@@ -21,7 +21,7 @@ export type WriteBarcodeParams = {
 
 export type FindBarcodeParams = WriteBarcodeParams;
 
-const findBarcode = ({ db, format, code }: WriteBarcodeParams): Realm.BSON.ObjectId | undefined => {
+const findBarcode = ({db, format, code}: WriteBarcodeParams): Realm.BSON.ObjectId | undefined => {
 	let barcode = db.objects(Database.Barcode).filtered(
 		`code == $0 && format == $1 LIMIT(1)`,
 		code, format
@@ -34,8 +34,8 @@ const findBarcode = ({ db, format, code }: WriteBarcodeParams): Realm.BSON.Objec
 	return undefined;
 };
 
-export const writeBarcode = ({ db, format, code }: WriteBarcodeParams): Realm.BSON.ObjectId => {
-	let bid = findBarcode({ db, format, code });
+export const writeBarcode = ({db, format, code}: WriteBarcodeParams): Realm.BSON.ObjectId => {
+	let bid = findBarcode({db, format, code});
 
 	if (bid === undefined) {
 		const data = BSON.serialize(BwipJs.raw(BarcodeTypes[format], code)[0]);
@@ -64,10 +64,10 @@ export type WriteCardParams = {
 	bid?: Realm.BSON.ObjectId;
 };
 
-export const writeCard = ({ db, ...params }: WriteCardParams): Realm.BSON.ObjectId => {
+export const writeCard = ({db, ...params}: WriteCardParams): Realm.BSON.ObjectId => {
 	let id: Realm.BSON.ObjectId;
 
-	if (params.bid || (params.bid = findBarcode({ db, format: params.format, code: params.code }))) {
+	if (params.bid || (params.bid = findBarcode({db, format: params.format, code: params.code}))) {
 		try {
 			db.write(() => {
 				const card = db.create(Database.Card, Database.Card.generate({
@@ -133,21 +133,21 @@ export type WriteManyCardsParams = {
 	}[];
 };
 
-export const writeManyCards = ({ db, cards }: WriteManyCardsParams) => {
+export const writeManyCards = ({db, cards}: WriteManyCardsParams) => {
 	if (cards.length == 1) {
-		writeCard({ db, ...cards[0] })
+		writeCard({db, ...cards[0]})
 		return;
 	}
 
 	try {
 		db.write(() => {
-			let table = new Map<{ format: string, code: string }, Realm.BSON.ObjectId>()
+			let table = new Map<{format: string, code: string}, Realm.BSON.ObjectId>()
 
 			for (const card of cards) {
 				if (
 					card.bid ||
-					(card.bid = table.get({ format: card.format, code: card.code })) ||
-					(card.bid = findBarcode({ db, format: card.format, code: card.code }))
+					(card.bid = table.get({format: card.format, code: card.code})) ||
+					(card.bid = findBarcode({db, format: card.format, code: card.code}))
 				) {
 					db.create(Database.Card, Database.Card.generate({
 						title: card.title,
@@ -184,7 +184,7 @@ export const writeManyCards = ({ db, cards }: WriteManyCardsParams) => {
 						bid: barcode._id
 					}));
 
-					table.set({ format: card.format, code: card.code }, barcode._id);
+					table.set({format: card.format, code: card.code}, barcode._id);
 				}
 			}
 		});

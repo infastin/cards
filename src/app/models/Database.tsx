@@ -1,4 +1,4 @@
-import { Realm, createRealmContext } from '@realm/react';
+import {Realm, createRealmContext} from '@realm/react';
 
 class Card extends Realm.Object {
 	_id: Realm.BSON.ObjectId;
@@ -8,7 +8,7 @@ class Card extends Realm.Object {
 	color: string;
 	bid: Realm.BSON.ObjectId;
 
-	static generate = ({ title, code, format, color, bid }: Database.Card.GenerateProps): Database.Card.Schema => {
+	static generate = ({title, code, format, color, bid}: Database.Card.GenerateProps): Database.Card.Schema => {
 		return {
 			_id: new Realm.BSON.ObjectId(),
 			title: title,
@@ -39,7 +39,7 @@ class Barcode extends Realm.Object {
 	format: string;
 	data: ArrayBuffer;
 
-	static generate = ({ code, format, data }: Database.Barcode.GenerateProps): Database.Barcode.Schema => {
+	static generate = ({code, format, data}: Database.Barcode.GenerateProps): Database.Barcode.Schema => {
 		return {
 			_id: new Realm.BSON.ObjectId(),
 			code: code,
@@ -65,7 +65,7 @@ class Settings extends Realm.Object {
 	theme: string;
 	lang: string;
 
-	static generate = ({ theme, lang }: Database.Settings.GenerateProps): Database.Settings.Schema => {
+	static generate = ({theme, lang}: Database.Settings.GenerateProps): Database.Settings.Schema => {
 		return {
 			_id: new Realm.BSON.ObjectId(),
 			theme: theme,

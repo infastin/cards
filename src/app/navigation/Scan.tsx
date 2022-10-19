@@ -1,21 +1,22 @@
-import { BarCodeScanner, BarCodeScannerResult } from "expo-barcode-scanner";
-import Svg, { Defs, Mask, Rect } from "react-native-svg";
+import Svg, {Defs, Mask, Rect} from "react-native-svg";
 import React from "react";
-import { Camera, CameraType } from "expo-camera";
-import { ScaledSize, Dimensions, View, StyleSheet } from "react-native";
-import { Text } from "react-native-paper";
-import { StackProps } from "../models/Navigation";
-import { MD3Theme } from "react-native-paper/lib/typescript/types";
+import {Camera, useCameraDevices, useFrameProcessor, Frame} from "react-native-vision-camera";
+import {View, StyleSheet} from "react-native";
+import {Text} from "react-native-paper";
+import {StackProps} from "../models/Navigation";
+import {MD3Theme} from "react-native-paper/lib/typescript/types";
 import Locale from "../locale";
+import {scanBarcodes, BarcodeFormat} from 'vision-camera-code-scanner';
+import {useSharedValue, runOnJS} from "react-native-reanimated";
 
 const ScanTypesCodes = {
-	CODE128: BarCodeScanner.Constants.BarCodeType.code128,
-	CODE93: BarCodeScanner.Constants.BarCodeType.code93,
-	CODE39: BarCodeScanner.Constants.BarCodeType.code39,
-	PDF417: BarCodeScanner.Constants.BarCodeType.pdf417,
-	EAN8: BarCodeScanner.Constants.BarCodeType.ean8,
-	EAN13: BarCodeScanner.Constants.BarCodeType.ean13,
-	QR: BarCodeScanner.Constants.BarCodeType.qr,
+	CODE128: BarcodeFormat.CODE_128,
+	CODE93: BarcodeFormat.CODE_93,
+	CODE39: BarcodeFormat.CODE_39,
+	PDF417: BarcodeFormat.PDF417,
+	EAN8: BarcodeFormat.EAN_8,
+	EAN13: BarcodeFormat.EAN_13,
+	QR: BarcodeFormat.QR_CODE,
 };
 const ScanTypesAll = Object.values(ScanTypesCodes);
 const ScanTypesStr = Object.fromEntries(
@@ -32,62 +33,98 @@ export const ScanTypes = Object.assign(
 	}
 );
 
+type Point = {
+	x: number;
+	y: number;
+};
+
 export type ScanProps = StackProps<"Scan"> & {
 	theme: MD3Theme,
 };
 
-const Scan = ({ navigation, route }: ScanProps) => {
+const Scan = ({navigation, route}: ScanProps) => {
 	const [hasPermission, setHasPermission] = React.useState<boolean>(false);
-	const [dimension, setDimension] = React.useState<ScaledSize>(Dimensions.get("window"));
+	const [active, setActive] = React.useState<boolean>(true);
+	const barcodeScanned = useSharedValue<boolean>(false);
+
+	const devices = useCameraDevices();
+	const device = devices.back;
 
 	React.useEffect(() => {
 		(async () => {
-			const status = await Camera.requestCameraPermissionsAsync();
-			setHasPermission(status.status === "granted");
+			const status = await Camera.requestCameraPermission();
+			setHasPermission(status === "authorized");
 		})();
 	}, []);
 
-	React.useEffect(() => {
-		const listener = Dimensions.addEventListener("change", ({ window }) => setDimension(window));
-		return () => listener.remove();
-	}, []);
-
-	const onBarCodeScanned = (result: BarCodeScannerResult) => {
-		if (!route.params.types.find((type) => type === result.type)) {
-			return;
-		}
-
-		const wTopLeft = { x: Math.floor(0.1 * dimension.width), y: Math.floor(0.2 * dimension.height) };
-		const wBottomRight = { x: Math.floor(0.9 * dimension.width), y: Math.floor(0.5 * dimension.height) };
-		const topLeft = result.cornerPoints[0];
-		const bottomRight = result.cornerPoints[2];
-
-		if (
-			wTopLeft.x > topLeft.x || wTopLeft.x > bottomRight.x ||
-			wBottomRight.x < topLeft.x || wBottomRight.x < bottomRight.x ||
-			wTopLeft.y > topLeft.y || wTopLeft.y > bottomRight.y ||
-			wBottomRight.y < topLeft.y || wBottomRight.y < bottomRight.y
-		) {
-			return;
-		}
-
+	const onBarcodeScanned = ({format, data}: {format: BarcodeFormat, data: string}) => {
+		setActive(false);
 		navigation.navigate("AddCard", {
-			code: result.data,
-			format: ScanTypes.Str[result.type],
-		});
-	};
+			code: data,
+			format: ScanTypes.Str[format],
+		})
+	}
+
+	const frameProcessor = useFrameProcessor((frame: Frame) => {
+		"worklet";
+
+		const barcodes = scanBarcodes(frame, route.params.types, {checkInverted: true});
+		const width = frame.width;
+		const height = frame.height;
+
+		for (const barcode of barcodes) {
+			let wTopLeft: Point;
+			let wBottomRight: Point;
+			let topLeft: Point;
+			let bottomRight: Point;
+
+			if (width > height) {
+				wTopLeft = {x: Math.floor(0.1 * height), y: Math.floor(0.2 * width)};
+				wBottomRight = {x: Math.floor(0.9 * height), y: Math.floor(0.5 * width)};
+				topLeft = barcode.cornerPoints[3];
+				bottomRight = barcode.cornerPoints[1];
+			} else {
+				wTopLeft = {x: Math.floor(0.1 * width), y: Math.floor(0.2 * height)};
+				wBottomRight = {x: Math.floor(0.9 * width), y: Math.floor(0.5 * height)};
+				topLeft = barcode.cornerPoints[0];
+				bottomRight = barcode.cornerPoints[2];
+			}
+
+			if (
+				wTopLeft.x > topLeft.x || wTopLeft.x > bottomRight.x ||
+				wBottomRight.x < topLeft.x || wBottomRight.x < bottomRight.x ||
+				wTopLeft.y > topLeft.y || wTopLeft.y > bottomRight.y ||
+				wBottomRight.y < topLeft.y || wBottomRight.y < bottomRight.y
+			) {
+				continue;
+			}
+
+			if (barcodeScanned.value) {
+				return;
+			}
+
+			barcodeScanned.value = true;
+
+			runOnJS(onBarcodeScanned)({
+				format: barcode.format,
+				data: barcode.rawValue
+			});
+		}
+	}, [route.params.types, barcodeScanned]);
 
 	const loc = Locale.useLocale();
 
 	return (
 		<>
-			{hasPermission ?
-				<BarCodeScanner
-					style={StyleSheet.absoluteFill}
-					type={CameraType.back}
-					onBarCodeScanned={onBarCodeScanned}
-					barCodeTypes={route.params.types}
-				>
+			{hasPermission && device ?
+				<View>
+					<Camera
+						style={StyleSheet.absoluteFill}
+						device={device}
+						isActive={active}
+						frameProcessor={frameProcessor}
+						frameProcessorFps={5}
+					/>
 					<Svg>
 						<Defs>
 							<Mask id="mask">
@@ -102,7 +139,7 @@ const Scan = ({ navigation, route }: ScanProps) => {
 					<View style={styles.helpContainer}>
 						<Text variant="titleMedium" style={styles.help}>{loc.t("ScanHelpMsg")}</Text>
 					</View>
-				</BarCodeScanner>
+				</View>
 				:
 				undefined
 			}

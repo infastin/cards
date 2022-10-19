@@ -1,11 +1,11 @@
 import React from "react";
-import { Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, ScaledSize, StyleSheet, View } from "react-native";
-import { AnimatedFAB, MD3Theme, withTheme, Modal, Portal, MD3LightTheme } from "react-native-paper";
+import {Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, ScaledSize, StyleSheet, View} from "react-native";
+import {AnimatedFAB, MD3Theme, withTheme, Modal, Portal, MD3LightTheme} from "react-native-paper";
 import LoyaltyCard from "../components/LoyaltyCard";
 import Database from "../models/Database";
-import { StackProps } from "../models/Navigation";
+import {StackProps} from "../models/Navigation";
 import * as Clipboard from "expo-clipboard";
-import { ColorPalletteStr } from "../models/Colors";
+import {ColorPalletteStr} from "../models/Colors";
 import Barcode from "../components/Barcode";
 import Locale from "../locale";
 
@@ -21,7 +21,7 @@ type ModalBarcodeProps = {
 	transform: boolean;
 };
 
-const Cards = ({ navigation }: CardsProps) => {
+const Cards = ({navigation}: CardsProps) => {
 	const [onTop, setOnTop] = React.useState<boolean>(true)
 	const [dimension, setDimension] = React.useState<ScaledSize>(Dimensions.get("window"));
 
@@ -29,11 +29,11 @@ const Cards = ({ navigation }: CardsProps) => {
 	const [modalBarcodeProps, setModalBarcodeProps] = React.useState<ModalBarcodeProps | null>(null);
 
 	React.useEffect(() => {
-		const listener = Dimensions.addEventListener("change", ({ window }) => setDimension(window));
+		const listener = Dimensions.addEventListener("change", ({window}) => setDimension(window));
 		return () => listener.remove();
 	}, []);
 
-	const onScroll = ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {
+	const onScroll = ({nativeEvent}: NativeSyntheticEvent<NativeScrollEvent>) => {
 		const curPos = nativeEvent.contentOffset.y;
 		setOnTop(curPos <= 0);
 	};
@@ -47,12 +47,12 @@ const Cards = ({ navigation }: CardsProps) => {
 	return (
 		<SafeAreaView style={styles.container}>
 			<FlatList
-				contentContainerStyle={{ paddingVertical: 12 }}
+				contentContainerStyle={{paddingVertical: 12}}
 				onScroll={onScroll}
 				data={cardsData}
 				keyExtractor={card => card._id.toString()}
-				renderItem={({ item }) => (
-					<View style={{ paddingHorizontal: 12 }}>
+				renderItem={({item}) => (
+					<View style={{paddingHorizontal: 12}}>
 						<LoyaltyCard
 							title={item.title}
 							code={item.code}
@@ -110,10 +110,10 @@ const Cards = ({ navigation }: CardsProps) => {
 						backgroundColor: MD3LightTheme.colors.elevation.level3,
 					}]}
 				>
-					<View style={{ justifyContent: "center", alignItems: "center" }}>
+					<View style={{justifyContent: "center", alignItems: "center"}}>
 						{modalBarcodeProps &&
 							<View style={{
-								transform: modalBarcodeProps.transform ? [{ rotate: "90deg" }] : undefined,
+								transform: modalBarcodeProps.transform ? [{rotate: "90deg"}] : undefined,
 								width: modalBarcodeProps.width,
 								height: modalBarcodeProps.height
 							}}>

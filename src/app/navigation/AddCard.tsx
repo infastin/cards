@@ -1,13 +1,13 @@
 import React from "react";
-import { Dimensions, FlatList, ScaledSize, StyleSheet, View } from "react-native";
-import { Button, TextInput, MD3Theme, withTheme, Text, HelperText, Chip, Snackbar } from "react-native-paper";
+import {Dimensions, FlatList, ScaledSize, StyleSheet, View} from "react-native";
+import {Button, TextInput, MD3Theme, withTheme, Text, HelperText, Chip, Snackbar} from "react-native-paper";
 import ColorButton from "../components/colorbutton";
-import { ScanTypes } from "./Scan";
-import { StackProps } from "../models/Navigation";
+import {ScanTypes} from "./Scan";
+import {StackProps} from "../models/Navigation";
 import Database from "../models/Database";
-import { ColorPallette } from "../models/Colors";
+import {ColorPallette} from "../models/Colors";
 import Locale from "../locale";
-import { writeCard, Exception } from "../models/DatabaseWrite";
+import {writeCard, Exception} from "../models/DatabaseWrite";
 
 export type AddCardProps = StackProps<"AddCard"> & {
 	theme: MD3Theme,
@@ -18,7 +18,7 @@ type Error = {
 	text: string;
 };
 
-const AddCard = ({ theme, navigation, route }: AddCardProps) => {
+const AddCard = ({theme, navigation, route}: AddCardProps) => {
 	const colorList = Object.entries(ColorPallette).map(([, v]) => v.bg);
 	const [selColor, setSelColor] = React.useState<string>(colorList[0]);
 
@@ -26,10 +26,10 @@ const AddCard = ({ theme, navigation, route }: AddCardProps) => {
 	const [selFormat, setSelFormat] = React.useState<string>(route.params?.format ? route.params.format : formatList[0]);
 
 	const [titleValue, setTitleValue] = React.useState<string>("");
-	const [titleError, setTitleError] = React.useState<Error>({ is: false, text: "" });
+	const [titleError, setTitleError] = React.useState<Error>({is: false, text: ""});
 
 	const [codeValue, setCodeValue] = React.useState<string>(route.params?.code ? route.params.code : "");
-	const [codeError, setCodeError] = React.useState<Error>({ is: false, text: "" });
+	const [codeError, setCodeError] = React.useState<Error>({is: false, text: ""});
 
 	const [snackVisible, setSnackVisible] = React.useState<boolean>(false);
 	const [snackMsg, setSnackMsg] = React.useState<string>("");
@@ -59,7 +59,7 @@ const AddCard = ({ theme, navigation, route }: AddCardProps) => {
 	}, [navigation, route]);
 
 	React.useEffect(() => {
-		const listener = Dimensions.addEventListener("change", ({ window }) => {
+		const listener = Dimensions.addEventListener("change", ({window}) => {
 			dimension.current = window;
 			setColorListKey(colorListKey == "colorListKey0" ? "colorListKey1" : "colorListKey0");
 		});
@@ -70,12 +70,12 @@ const AddCard = ({ theme, navigation, route }: AddCardProps) => {
 		let errors = 0;
 
 		if (titleValue.length == 0) {
-			setTitleError({ is: true, text: loc.t("titleError") });
+			setTitleError({is: true, text: loc.t("titleError")});
 			errors++;
 		}
 
 		if (codeValue.length == 0) {
-			setCodeError({ is: true, text: loc.t("codeError") });
+			setCodeError({is: true, text: loc.t("codeError")});
 			errors++;
 		}
 
@@ -103,14 +103,14 @@ const AddCard = ({ theme, navigation, route }: AddCardProps) => {
 
 	const onTitleChange = (value: string) => {
 		if (titleError) {
-			setTitleError({ is: false, text: "" });
+			setTitleError({is: false, text: ""});
 		}
 		setTitleValue(value);
 	}
 
 	const onCodeChange = (value: string) => {
 		if (codeError) {
-			setCodeError({ is: false, text: "" });
+			setCodeError({is: false, text: ""});
 		}
 		setCodeValue(value);
 	}
@@ -162,7 +162,7 @@ const AddCard = ({ theme, navigation, route }: AddCardProps) => {
 						columnWrapperStyle={{
 							justifyContent: "space-between"
 						}}
-						renderItem={({ item }) => (
+						renderItem={({item}) => (
 							<Chip
 								style={selFormat === item.format ? styles.formatSelected : styles.format}
 								mode={selFormat === item.format ? "flat" : "outlined"}
@@ -186,7 +186,7 @@ const AddCard = ({ theme, navigation, route }: AddCardProps) => {
 							})}
 							data={colorData}
 							keyExtractor={(item) => `colorButton-${item.index}`}
-							renderItem={({ item }) => (
+							renderItem={({item}) => (
 								<ColorButton style={styles.colorButton} color={item.color} />
 							)}
 						/>
@@ -214,7 +214,7 @@ const AddCard = ({ theme, navigation, route }: AddCardProps) => {
 				</View>
 			</View>
 			<Snackbar
-				style={{ backgroundColor: theme.colors.errorContainer }}
+				style={{backgroundColor: theme.colors.errorContainer}}
 				visible={snackVisible}
 				duration={3500}
 				onDismiss={() => {
@@ -222,7 +222,7 @@ const AddCard = ({ theme, navigation, route }: AddCardProps) => {
 					setSnackMsg("");
 				}}
 			>
-				<Text style={{ color: theme.colors.onErrorContainer }}>{snackMsg}</Text>
+				<Text style={{color: theme.colors.onErrorContainer}}>{snackMsg}</Text>
 			</Snackbar>
 		</View>
 	)

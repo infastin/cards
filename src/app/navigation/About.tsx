@@ -1,14 +1,14 @@
 import React from "react";
-import { View, Image, StyleSheet, ScrollView } from "react-native";
-import { Dialog, List, Portal, Text } from "react-native-paper";
-import { expo as app } from "../../../app.json";
+import {View, Image, StyleSheet, ScrollView} from "react-native";
+import {Dialog, List, Portal, Text} from "react-native-paper";
+import {expo as app} from "../../../app.json";
 import AppInfo from "../models/AppInfo";
 import * as IntentLauncher from 'expo-intent-launcher';
 import Intent from "../models/Intent";
-import { StackProps } from "../models/Navigation";
+import {StackProps} from "../models/Navigation";
 import Locale from "../locale";
 
-const About = ({ navigation }: StackProps<"About">) => {
+const About = ({navigation}: StackProps<"About">) => {
 	const [dialogVisible, setDialogVisible] = React.useState<boolean>(false);
 	const loc = Locale.useLocale();
 
@@ -63,8 +63,8 @@ const About = ({ navigation }: StackProps<"About">) => {
 					onDismiss={() => setDialogVisible(false)}
 				>
 					<Dialog.Title>{loc.t("licenseTitle")}</Dialog.Title>
-					<Dialog.ScrollArea style={{ height: "60%" }}>
-						<ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
+					<Dialog.ScrollArea style={{height: "60%"}}>
+						<ScrollView contentContainerStyle={{paddingVertical: 20}}>
 							<Text>{AppInfo.licenseText}</Text>
 						</ScrollView>
 					</Dialog.ScrollArea>

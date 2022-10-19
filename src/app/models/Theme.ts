@@ -27,4 +27,4 @@ export const DarkTheme = {
 	}
 };
 
-export { PaperProvider, NavigationContainer };
+export {PaperProvider, NavigationContainer};

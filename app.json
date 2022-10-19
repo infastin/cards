@@ -5,7 +5,9 @@
 		"owner": "infastin",
 		"version": "1.0.0",
 		"sdkVersion": "46.0.0",
-		"platforms": ["android"],
+		"platforms": [
+			"android"
+		],
 		"githubUrl": "https://github.com/infastin/cards",
 		"orientation": "portrait",
 		"userInterfaceStyle": "automatic",
@@ -24,6 +26,9 @@
 				"foregroundImage": "./assets/icon864.png",
 				"backgroundColor": "#FFFFFF"
 			},
+			"permissions": [
+				"android.permission.CAMERA"
+			],
 			"package": "com.github.infastin.cards"
 		},
 		"extra": {

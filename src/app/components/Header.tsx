@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import {StyleSheet} from 'react-native';
+import React from 'react';
+import {StyleSheet, StatusBar} from 'react-native';
 import {Appbar, Menu} from 'react-native-paper';
 import {getHeaderTitle} from '@react-navigation/elements';
 import {StackHeaderProps} from '@react-navigation/stack';
 import Locale from '../locale';
 
 const Header = ({options, route, navigation, back}: StackHeaderProps) => {
-	const [visible, setVisible] = useState(false);
+	const [visible, setVisible] = React.useState(false);
 	const name = getHeaderTitle(options, route.name);
 	const loc = Locale.useLocale();
 	const title = loc.t(name);
@@ -15,6 +15,7 @@ const Header = ({options, route, navigation, back}: StackHeaderProps) => {
 		<Appbar.Header
 			mode="small"
 			style={name === "Scan" ? styles.headerScan : undefined}
+			dark={true}
 		>
 			{back && <Appbar.BackAction
 				color={name === "Scan" ? "#ffffff" : undefined}
@@ -38,17 +39,18 @@ const Header = ({options, route, navigation, back}: StackHeaderProps) => {
 					navigation.navigate("About");
 				}} />
 			</Menu>
-
 		</Appbar.Header>
 	)
 };
 
 const styles = StyleSheet.create({
 	headerScan: {
-		backgroundColor: "transparent",
+		backgroundColor: "rgba(0, 0, 0, 0)",
 		position: "absolute",
-		width: "100%",
+		marginTop: StatusBar.currentHeight,
+		paddingTop: 0,
 		top: 0,
+		width: "100%",
 		left: 0,
 	},
 });

@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import {I18n} from 'i18n-js';
 import * as Localization from 'expo-localization';
 import preval from 'babel-plugin-preval/macro';

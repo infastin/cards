@@ -1,4 +1,4 @@
-import { MD3DarkTheme, MD3LightTheme } from "react-native-paper";
+import {MD3DarkTheme, MD3LightTheme} from "react-native-paper";
 
 const ColorPalleteBG = {
 	primary: MD3LightTheme.colors.primary,
@@ -134,12 +134,12 @@ const ColorPalleteFG = {
 
 export const ColorPallette = Object.fromEntries(
 	Object.entries(ColorPalleteBG).map(
-		([k, v]) => [k, { bg: v, fg: ColorPalleteFG[k] }]
+		([k, v]) => [k, {bg: v, fg: ColorPalleteFG[k]}]
 	)
 );
 
 export const ColorPalletteStr = Object.fromEntries(
 	Object.entries(ColorPallette).map(
-		([k, v]) => [v.bg, { name: k, fg: v.fg }]
+		([k, v]) => [v.bg, {name: k, fg: v.fg}]
 	)
 );

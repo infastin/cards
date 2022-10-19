@@ -1,4 +1,5 @@
-import { StackScreenProps } from "@react-navigation/stack";
+import {StackScreenProps} from "@react-navigation/stack";
+import {BarcodeFormat} from "vision-camera-code-scanner";
 
 export type StackParamList = {
 	Cards: undefined,
@@ -9,7 +10,7 @@ export type StackParamList = {
 		color?: string,
 	},
 	Scan: {
-		types: string[],
+		types: BarcodeFormat[],
 	},
 	Settings: undefined,
 	About: undefined,
