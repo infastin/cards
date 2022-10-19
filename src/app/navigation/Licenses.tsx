@@ -53,7 +53,7 @@ const Licenses = () => {
 					onDismiss={() => setDialogVisible(false)}
 				>
 					<Dialog.Title>{loc.t("licenseTitle")}</Dialog.Title>
-					<Dialog.ScrollArea style={{ maxHeight: "60%" }}>
+					<Dialog.ScrollArea style={{ height: "60%" }}>
 						<ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
 							<Text variant="bodySmall">{dialogText}</Text>
 						</ScrollView>

@@ -227,7 +227,7 @@ const Settings = ({ theme }: SettingsProps) => {
 					onDismiss={() => setLangDialogVisible(false)}
 				>
 					<Dialog.Title>{loc.t("settingsLang")}</Dialog.Title>
-					<Dialog.ScrollArea style={{ maxHeight: "60%" }}>
+					<Dialog.ScrollArea style={{ height: "60%" }}>
 						<FlatList
 							data={langDataList}
 							keyExtractor={item => item[0]}
@@ -250,7 +250,7 @@ const Settings = ({ theme }: SettingsProps) => {
 					onDismiss={() => setThemeDialogVisible(false)}
 				>
 					<Dialog.Title>{loc.t("settingsTheme")}</Dialog.Title>
-					<Dialog.ScrollArea style={{ maxHeight: "60%" }}>
+					<Dialog.ScrollArea style={{ height: "60%" }}>
 						<FlatList
 							data={themeDataList}
 							keyExtractor={item => item[0]}

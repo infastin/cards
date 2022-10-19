@@ -52,7 +52,7 @@ const About = ({ navigation }: StackProps<"About">) => {
 				/>
 				<List.Item
 					title={loc.t("iconTitle")}
-					description={`${loc.t("iconCreatedBy")} ${loc.t("iconAuthor")}`}
+					description={`${loc.t("iconCreatedBy")} ${AppInfo.iconAuthor}`}
 					left={(props) => <List.Icon {...props} icon="auto-fix" />}
 					onPress={() => openUrl(AppInfo.iconAuthorUrl)}
 				/>
@@ -63,7 +63,7 @@ const About = ({ navigation }: StackProps<"About">) => {
 					onDismiss={() => setDialogVisible(false)}
 				>
 					<Dialog.Title>{loc.t("licenseTitle")}</Dialog.Title>
-					<Dialog.ScrollArea style={{ maxHeight: "60%" }}>
+					<Dialog.ScrollArea style={{ height: "60%" }}>
 						<ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
 							<Text>{AppInfo.licenseText}</Text>
 						</ScrollView>
