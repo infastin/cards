@@ -1,6 +1,7 @@
 import Svg, {Defs, Mask, Rect} from "react-native-svg";
 import React from "react";
 import {Camera, useCameraDevices, useFrameProcessor, Frame} from "react-native-vision-camera";
+import {useKeepAwake} from "expo-keep-awake";
 import {View, StyleSheet} from "react-native";
 import {Text} from "react-native-paper";
 import {StackProps} from "../models/Navigation";
@@ -64,6 +65,8 @@ const Scan = ({navigation, route}: ScanProps) => {
 			format: ScanTypes.Str[format],
 		})
 	}
+
+	useKeepAwake();
 
 	const frameProcessor = useFrameProcessor((frame: Frame) => {
 		"worklet";

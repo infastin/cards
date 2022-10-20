@@ -1,6 +1,7 @@
 import React from "react";
 import {Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, ScaledSize, StyleSheet, View} from "react-native";
 import {AnimatedFAB, MD3Theme, withTheme, Modal, Portal, MD3LightTheme} from "react-native-paper";
+import * as Brightness from "expo-brightness";
 import LoyaltyCard from "../components/LoyaltyCard";
 import Database from "../models/Database";
 import {StackProps} from "../models/Navigation";
@@ -25,6 +26,7 @@ const Cards = ({navigation}: CardsProps) => {
 	const [onTop, setOnTop] = React.useState<boolean>(true)
 	const [dimension, setDimension] = React.useState<ScaledSize>(Dimensions.get("window"));
 
+	const [oldBrightness, setOldBrightness] = React.useState<number>(0);
 	const [modalVisible, setModalVisible] = React.useState<boolean>(false);
 	const [modalBarcodeProps, setModalBarcodeProps] = React.useState<ModalBarcodeProps | null>(null);
 
@@ -87,7 +89,15 @@ const Cards = ({navigation}: CardsProps) => {
 									height: barcodeHeight,
 									transform: transform,
 								});
+
 								setModalVisible(true);
+
+								(async () => {
+									const old = await Brightness.getSystemBrightnessAsync();
+									setOldBrightness(old);
+								})();
+
+								Brightness.setBrightnessAsync(0.8);
 							}}
 						/>
 					</View>
@@ -104,7 +114,10 @@ const Cards = ({navigation}: CardsProps) => {
 			<Portal>
 				<Modal
 					visible={modalVisible}
-					onDismiss={() => setModalVisible(false)}
+					onDismiss={() => {
+						Brightness.setBrightnessAsync(oldBrightness);
+						setModalVisible(false)
+					}}
 					style={styles.modalWrapper}
 					contentContainerStyle={[styles.modal, {
 						backgroundColor: MD3LightTheme.colors.elevation.level3,
