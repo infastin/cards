@@ -32,15 +32,19 @@ const Barcode = ({value, format = "CODE128"}: BarcodeProps) => {
 	const getRectangles1D = (encoding: BwipJs.RawReturn): Rectangle[] => {
 		const unitWidth = 100 / encoding.sbs.reduce((pSum, number) => pSum + number, 0);
 
+		console.log(encoding);
+
 		const rects = [];
 		let x = 0
 
 		for (let i = 0; i < encoding.sbs.length; ++i) {
 			const barWidth = encoding.sbs[i];
 
-			if (i % 2 != 0) {
+			console.log(`${i % 2 == 0 ? "b" : "w"}: ${barWidth}`)
+
+			if (i % 2 == 0) {
 				rects.push({
-					x: x - unitWidth * barWidth,
+					x: x,
 					y: 0,
 					width: unitWidth * barWidth,
 					height: 100,
