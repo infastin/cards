@@ -93,7 +93,7 @@ const Cards = ({navigation}: CardsProps) => {
 								setModalVisible(true);
 
 								(async () => {
-									const old = await Brightness.getSystemBrightnessAsync();
+									const old = await Brightness.getBrightnessAsync();
 									setOldBrightness(old);
 								})();
 
