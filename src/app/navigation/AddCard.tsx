@@ -1,5 +1,5 @@
 import React from "react";
-import {Dimensions, FlatList, ScaledSize, StyleSheet, View} from "react-native";
+import {Dimensions, FlatList, SafeAreaView, ScaledSize, ScrollView, StyleSheet, View} from "react-native";
 import {Button, TextInput, MD3Theme, withTheme, Text, HelperText, Chip, Snackbar} from "react-native-paper";
 import ColorButton from "../components/colorbutton";
 import {ScanTypes} from "./Scan";
@@ -130,89 +130,97 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 	});
 
 	return (
-		<View>
-			<View style={styles.container}>
-				<View style={styles.inputContainer}>
-					<TextInput
-						mode="outlined"
-						label={loc.t("titleLabel")}
-						onChangeText={onTitleChange}
-						error={titleError.is}
-					/>
-					<HelperText type="error" visible={titleError.is}>
-						{titleError.text}
-					</HelperText>
-					<TextInput
-						mode="outlined"
-						label={loc.t("codeLabel")}
-						onChangeText={onCodeChange}
-						error={codeError.is}
-						value={codeValue}
-					/>
-					<HelperText type="error" visible={codeError.is}>
-						{codeError.text}
-					</HelperText>
-				</View>
-				<View style={styles.formatContainer}>
-					<Text style={styles.choose} variant="titleSmall">{loc.t("chooseFormatLabel")}</Text>
-					<FlatList
-						numColumns={3}
-						data={formatData}
-						keyExtractor={item => `formatItem-${item.index}`}
-						columnWrapperStyle={{
-							justifyContent: "space-between"
-						}}
-						renderItem={({item}) => (
-							<Chip
-								style={selFormat === item.format ? styles.formatSelected : styles.format}
-								mode={selFormat === item.format ? "flat" : "outlined"}
-								onPress={() => setSelFormat(item.format)}
+		<SafeAreaView style={{flex: 1}}>
+			<FlatList
+				data={[{}]}
+				keyExtractor={() => null}
+				renderItem={() => (
+					<View style={styles.container}>
+						<View style={styles.inputContainer}>
+							<TextInput
+								mode="outlined"
+								label={loc.t("titleLabel")}
+								onChangeText={onTitleChange}
+								error={titleError.is}
+							/>
+							<HelperText type="error" visible={titleError.is}>
+								{titleError.text}
+							</HelperText>
+							<TextInput
+								mode="outlined"
+								label={loc.t("codeLabel")}
+								onChangeText={onCodeChange}
+								error={codeError.is}
+								value={codeValue}
+							/>
+							<HelperText type="error" visible={codeError.is}>
+								{codeError.text}
+							</HelperText>
+						</View>
+						<View style={styles.formatContainer}>
+							<Text style={styles.choose} variant="titleSmall">{loc.t("chooseFormatLabel")}</Text>
+							<FlatList
+								listKey="listFormats"
+								numColumns={3}
+								data={formatData}
+								keyExtractor={item => `formatItem-${item.index}`}
+								columnWrapperStyle={{
+									justifyContent: "space-between"
+								}}
+								renderItem={({item}) => (
+									<Chip
+										style={selFormat === item.format ? styles.formatSelected : styles.format}
+										mode={selFormat === item.format ? "flat" : "outlined"}
+										onPress={() => setSelFormat(item.format)}
+									>
+										{item.format}
+									</Chip>
+								)}
+							/>
+						</View>
+						<View style={styles.colorContainer}>
+							<Text style={styles.choose} variant="titleSmall">{loc.t("chooseColorLabel")}</Text>
+							<ColorButton.Group color={selColor} onColorChange={(color) => setSelColor(color)} >
+								<FlatList
+									listKey="colors"
+									key={colorListKey}
+									numColumns={Math.floor(dimension.current.width / 46)}
+									getItemLayout={(_data, index) => ({
+										length: 46,
+										offset: 46 * index,
+										index: index
+									})}
+									data={colorData}
+									keyExtractor={(item) => `colorButton-${item.index}`}
+									renderItem={({item}) => (
+										<ColorButton style={styles.colorButton} color={item.color} />
+									)}
+								/>
+							</ColorButton.Group>
+						</View>
+						<View style={styles.buttonContainer}>
+							<Button
+								style={styles.scanButton}
+								mode="outlined"
+								onPress={() => {
+									navigation.navigate("Scan", {
+										types: ScanTypes.ALL,
+									});
+								}}
 							>
-								{item.format}
-							</Chip>
-						)}
-					/>
-				</View>
-				<View style={styles.colorContainer}>
-					<Text style={styles.choose} variant="titleSmall">{loc.t("chooseColorLabel")}</Text>
-					<ColorButton.Group color={selColor} onColorChange={(color) => setSelColor(color)} >
-						<FlatList
-							key={colorListKey}
-							numColumns={Math.floor(dimension.current.width / 46)}
-							getItemLayout={(_data, index) => ({
-								length: 46,
-								offset: 46 * index,
-								index: index
-							})}
-							data={colorData}
-							keyExtractor={(item) => `colorButton-${item.index}`}
-							renderItem={({item}) => (
-								<ColorButton style={styles.colorButton} color={item.color} />
-							)}
-						/>
-					</ColorButton.Group>
-				</View>
-				<View style={styles.buttonContainer}>
-					<Button
-						style={styles.scanButton}
-						mode="outlined"
-						onPress={() => {
-							navigation.navigate("Scan", {
-								types: ScanTypes.ALL,
-							});
-						}}
-					>
-						{loc.t("scanButton")}
-					</Button>
-					<Button
-						style={styles.addButton}
-						mode="contained"
-						onPress={onAddPress}
-					>
-						{loc.t("addButton")}
-					</Button>
-				</View>
-			</View>
+								{loc.t("scanButton")}
+							</Button>
+							<Button
+								style={styles.addButton}
+								mode="contained"
+								onPress={onAddPress}
+							>
+								{loc.t("addButton")}
+							</Button>
+						</View>
+					</View>
+				)}
+			/>
 			<Snackbar
 				style={{backgroundColor: theme.colors.errorContainer}}
 				visible={snackVisible}
@@ -224,7 +232,7 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 			>
 				<Text style={{color: theme.colors.onErrorContainer}}>{snackMsg}</Text>
 			</Snackbar>
-		</View>
+		</SafeAreaView>
 	)
 }
 

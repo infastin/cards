@@ -1,5 +1,5 @@
 import React from "react";
-import {ScrollView, View} from "react-native";
+import {SafeAreaView, ScrollView, View} from "react-native";
 import {Dialog, Text, IconButton, List, Portal} from "react-native-paper";
 import * as IntentLauncher from 'expo-intent-launcher';
 import Intent from "../models/Intent";
@@ -23,7 +23,7 @@ const Licenses = () => {
 	};
 
 	return (
-		<View style={{flex: 1}}>
+		<SafeAreaView style={{flex: 1}}>
 			<FlashList
 				data={licensesList}
 				keyExtractor={(item) => item[0]}
@@ -60,7 +60,7 @@ const Licenses = () => {
 					</Dialog.ScrollArea>
 				</Dialog>
 			</Portal>
-		</View>
+		</SafeAreaView>
 	)
 };
 

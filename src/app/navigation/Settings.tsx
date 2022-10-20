@@ -133,6 +133,7 @@ const Settings = ({theme}: SettingsProps) => {
 					} catch {
 						setSnackMsg(`${loc.t("errorLabel")}: ${loc.t("invalidFile")}`)
 						setSnackVisible(true);
+						return;
 					}
 				}
 
@@ -179,37 +180,35 @@ const Settings = ({theme}: SettingsProps) => {
 	const themeDataList = Object.entries(themeData);
 
 	return (
-		<View>
-			<SafeAreaView>
-				<ScrollView>
-					<List.Section title={loc.t("settingsApperance")}>
-						<List.Item
-							title={loc.t("settingsLang")}
-							description={langData[settings.lang]}
-							left={(props) => <List.Icon {...props} icon="web" />}
-							onPress={() => setLangDialogVisible(true)}
-						/>
-						<List.Item
-							title={loc.t("settingsTheme")}
-							description={themeData[settings.theme]}
-							left={(props) => <List.Icon {...props} icon="brush-variant" />}
-							onPress={() => setThemeDialogVisible(true)}
-						/>
-					</List.Section>
-					<List.Section title={loc.t("settingsIAE")}>
-						<List.Item
-							title={loc.t("settingsImport")}
-							left={(props) => <List.Icon {...props} icon="database-import" />}
-							onPress={importCards}
-						/>
-						<List.Item
-							title={loc.t("settingsExport")}
-							left={(props) => <List.Icon {...props} icon="database-export" />}
-							onPress={() => setExportDialogVisible(true)}
-						/>
-					</List.Section>
-				</ScrollView>
-			</SafeAreaView>
+		<SafeAreaView style={{flex: 1}}>
+			<ScrollView>
+				<List.Section title={loc.t("settingsApperance")}>
+					<List.Item
+						title={loc.t("settingsLang")}
+						description={langData[settings.lang]}
+						left={(props) => <List.Icon {...props} icon="web" />}
+						onPress={() => setLangDialogVisible(true)}
+					/>
+					<List.Item
+						title={loc.t("settingsTheme")}
+						description={themeData[settings.theme]}
+						left={(props) => <List.Icon {...props} icon="brush-variant" />}
+						onPress={() => setThemeDialogVisible(true)}
+					/>
+				</List.Section>
+				<List.Section title={loc.t("settingsIAE")}>
+					<List.Item
+						title={loc.t("settingsImport")}
+						left={(props) => <List.Icon {...props} icon="database-import" />}
+						onPress={importCards}
+					/>
+					<List.Item
+						title={loc.t("settingsExport")}
+						left={(props) => <List.Icon {...props} icon="database-export" />}
+						onPress={() => setExportDialogVisible(true)}
+					/>
+				</List.Section>
+			</ScrollView>
 			<Snackbar
 				style={{backgroundColor: theme.colors.errorContainer}}
 				visible={snackVisible}
@@ -330,8 +329,8 @@ const Settings = ({theme}: SettingsProps) => {
 						</View>
 					</Dialog.Content>
 				</Dialog>
-			</Portal >
-		</View >
+			</Portal>
+		</SafeAreaView>
 	)
 };
 
