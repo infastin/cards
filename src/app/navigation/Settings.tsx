@@ -64,7 +64,7 @@ const Settings = ({theme}: SettingsProps) => {
 		let data: string;
 		switch (format) {
 			case "bson":
-				data = BSON.serialize(cards).toString("base64");
+				data = BSON.serialize(cards).toString("binary");
 				break;
 			default:
 			case "json":
@@ -127,7 +127,7 @@ const Settings = ({theme}: SettingsProps) => {
 					cards = JSON.parse(data);
 				} catch {
 					try {
-						const cardsBson = BSON.deserialize(Buffer.from(data, "base64"));
+						const cardsBson = BSON.deserialize(Buffer.from(data, "binary"));
 						cards = Object.values(cardsBson);
 					} catch {
 						setInfoVariant("error");
