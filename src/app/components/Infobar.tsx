@@ -7,7 +7,7 @@ export type InfobarProps = Omit<SnackbarProps, "children"> & {
 	text: string,
 };
 
-const Infobar = ({variant = "info", text, ...props}: InfobarProps) => {
+const Infobar = ({variant = "info", text, style, ...props}: InfobarProps) => {
 	const variants = {
 		info: {
 			bg: {backgroundColor: props.theme.colors.secondaryContainer},
@@ -25,7 +25,7 @@ const Infobar = ({variant = "info", text, ...props}: InfobarProps) => {
 
 	return (
 		<Snackbar
-			style={variants[variant].bg}
+			style={[variants[variant].bg, style]}
 			{...props}
 		>
 			<Text style={variants[variant].fg}>{text}</Text>

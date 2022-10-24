@@ -113,6 +113,7 @@ const Cards = ({navigation}: CardsProps) => {
 				)}
 			/>
 			<Infobar
+				style={{zIndex: 3}}
 				text={infoMsg}
 				visible={infoVisible}
 				duration={3500}
