@@ -32,15 +32,11 @@ const Barcode = ({value, format = "CODE128"}: BarcodeProps) => {
 	const getRectangles1D = (encoding: BwipJs.RawReturn): Rectangle[] => {
 		const unitWidth = 100 / encoding.sbs.reduce((pSum, number) => pSum + number, 0);
 
-		console.log(encoding);
-
 		const rects = [];
 		let x = 0
 
 		for (let i = 0; i < encoding.sbs.length; ++i) {
 			const barWidth = encoding.sbs[i];
-
-			console.log(`${i % 2 == 0 ? "b" : "w"}: ${barWidth}`)
 
 			if (i % 2 == 0) {
 				rects.push({
@@ -64,12 +60,12 @@ const Barcode = ({value, format = "CODE128"}: BarcodeProps) => {
 		const rects = [];
 		let y = 0;
 
-		for (let j = 0; j < encoding.pixy; ++j) {
+		for (let i = 0; i < encoding.pixy; ++i) {
 			let barWidth = 0;
 			let x = 0;
 
-			for (let i = 0; i < encoding.pixx; ++i) {
-				if (encoding.pixs[j * encoding.pixx + i]) {
+			for (let j = 0; j < encoding.pixx; ++j) {
+				if (encoding.pixs[i * encoding.pixx + j]) {
 					barWidth++;
 				} else if (barWidth > 0) {
 					rects.push({

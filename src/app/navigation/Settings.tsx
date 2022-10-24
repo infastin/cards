@@ -73,7 +73,7 @@ const Settings = ({theme}: SettingsProps) => {
 			const exportPath = RNFS.CachesDirectoryPath + "/" + exportFilename;
 			(async () => {
 				await RNFS.writeFile(exportPath, data);
-				const intentResult = await IntentLauncher.startActivityAsync({
+				await IntentLauncher.startActivityAsync({
 					action: Intent.Action.CHOOSER,
 					extra: {
 						[Intent.Extra.INTENT]: {
@@ -86,10 +86,6 @@ const Settings = ({theme}: SettingsProps) => {
 						}
 					}
 				});
-
-				if (intentResult.resultCode === IntentLauncher.ResultCode.Success) {
-
-				}
 			})();
 		} else {
 			(async () => {
@@ -114,7 +110,7 @@ const Settings = ({theme}: SettingsProps) => {
 			const intentResult = await IntentLauncher.startActivityAsync({
 				action: Intent.Action.OPEN_DOCUMENT,
 				category: Intent.Category.OPENABLE,
-				type: "*/*",
+				type: "application/*",
 				extra: {
 					[Intent.Extra.MIME_TYPES]: Object.values(formatMimeTypes),
 				}
