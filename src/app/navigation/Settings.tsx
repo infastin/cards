@@ -12,6 +12,7 @@ import Intent from "../models/Intent";
 import RNFS from "react-native-fs";
 import {Exception, writeManyCards} from "../models/DatabaseWrite";
 import {Buffer} from 'buffer';
+import {useStateCallback} from "../models/Hooks";
 
 export type SettingsProps = StackProps<"Settings"> & {
 	theme: MD3Theme,
@@ -20,7 +21,7 @@ export type SettingsProps = StackProps<"Settings"> & {
 const Settings = ({theme}: SettingsProps) => {
 	const [langDialogVisible, setLangDialogVisible] = React.useState<boolean>(false);
 	const [themeDialogVisible, setThemeDialogVisible] = React.useState<boolean>(false);
-	const [exportDialogVisible, setExportDialogVisible] = React.useState<boolean>(false);
+	const [exportDialogVisible, setExportDialogVisible] = useStateCallback<boolean>(false);
 
 	const [exportMenuVisible, setExportMenuVisible] = React.useState<boolean>(false);
 	const [exportIconLayout, setExportIconLayout] = React.useState<LayoutRectangle>({x: 0, y: 0, width: 0, height: 0});
@@ -311,14 +312,22 @@ const Settings = ({theme}: SettingsProps) => {
 							<Button
 								mode="outlined"
 								style={styles.menuExportShare}
-								onPress={() => exportCards({format: exportFormat.value, share: true})}
+								onPress={() => {
+									setExportDialogVisible(false, () => {
+										exportCards({format: exportFormat.value, share: true})
+									});
+								}}
 							>
 								{loc.t("settingsExportShare")}
 							</Button>
 							<Button
 								mode="contained"
 								style={styles.menuExportSave}
-								onPress={() => exportCards({format: exportFormat.value, share: false})}
+								onPress={() => {
+									setExportDialogVisible(false, () => {
+										exportCards({format: exportFormat.value, share: false})
+									});
+								}}
 							>
 								{loc.t("settingsExportSave")}
 							</Button>
