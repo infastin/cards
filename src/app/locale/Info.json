@@ -1,0 +1,10 @@
+{
+	"en-US": {
+		"infoLabel": "Info",
+		"codeCopied": "Code has been copied"
+	},
+	"ru-RU": {
+		"infoLabel": "Информация",
+		"codeCopied": "Код был скопирован"
+	}
+}

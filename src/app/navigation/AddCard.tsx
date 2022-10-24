@@ -1,6 +1,6 @@
 import React from "react";
-import {Dimensions, FlatList, SafeAreaView, ScaledSize, ScrollView, StyleSheet, View} from "react-native";
-import {Button, TextInput, MD3Theme, withTheme, Text, HelperText, Chip, Snackbar} from "react-native-paper";
+import {Dimensions, FlatList, SafeAreaView, ScaledSize, StyleSheet, View} from "react-native";
+import {Button, TextInput, MD3Theme, withTheme, Text, HelperText, Chip} from "react-native-paper";
 import ColorButton from "../components/colorbutton";
 import {ScanTypes} from "./Scan";
 import {StackProps} from "../models/Navigation";
@@ -8,6 +8,7 @@ import Database from "../models/Database";
 import {ColorPallette} from "../models/Colors";
 import Locale from "../locale";
 import {writeCard, Exception} from "../models/DatabaseWrite";
+import Infobar from "../components/Infobar";
 
 export type AddCardProps = StackProps<"AddCard"> & {
 	theme: MD3Theme,
@@ -18,7 +19,7 @@ type Error = {
 	text: string;
 };
 
-const AddCard = ({theme, navigation, route}: AddCardProps) => {
+const AddCard = ({navigation, route}: AddCardProps) => {
 	const colorList = Object.entries(ColorPallette).map(([, v]) => v.bg);
 	const [selColor, setSelColor] = React.useState<string>(colorList[0]);
 
@@ -31,8 +32,8 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 	const [codeValue, setCodeValue] = React.useState<string>(route.params?.code ? route.params.code : "");
 	const [codeError, setCodeError] = React.useState<Error>({is: false, text: ""});
 
-	const [snackVisible, setSnackVisible] = React.useState<boolean>(false);
-	const [snackMsg, setSnackMsg] = React.useState<string>("");
+	const [infoVisible, setInfoVisible] = React.useState<boolean>(false);
+	const [infoMsg, setInfoMsg] = React.useState<string>("");
 
 	const [colorListKey, setColorListKey] = React.useState<"colorListKey0" | "colorListKey1">("colorListKey0");
 	const dimension = React.useRef<ScaledSize>(Dimensions.get("window"));
@@ -93,8 +94,8 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 			});
 		} catch (err) {
 			const error: Exception = err;
-			setSnackMsg(`${loc.t("errorLabel")}: ${loc.t(error.msg)}`);
-			setSnackVisible(true);
+			setInfoMsg(`${loc.t("errorLabel")}: ${loc.t(error.msg)}`);
+			setInfoVisible(true);
 			return;
 		}
 
@@ -221,17 +222,16 @@ const AddCard = ({theme, navigation, route}: AddCardProps) => {
 					</View>
 				)}
 			/>
-			<Snackbar
-				style={{backgroundColor: theme.colors.errorContainer}}
-				visible={snackVisible}
+			<Infobar
+				variant="error"
+				text={infoMsg}
+				visible={infoVisible}
 				duration={3500}
 				onDismiss={() => {
-					setSnackVisible(false);
-					setSnackMsg("");
+					setInfoVisible(false);
+					setInfoMsg("");
 				}}
-			>
-				<Text style={{color: theme.colors.onErrorContainer}}>{snackMsg}</Text>
-			</Snackbar>
+			/>
 		</SafeAreaView>
 	)
 }

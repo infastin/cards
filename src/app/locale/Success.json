@@ -1,0 +1,10 @@
+{
+	"en-US": {
+		"successLabel": "Success",
+		"importSuccess": "Cards has been imported"
+	},
+	"ru-RU": {
+		"successLabel": "Успех",
+		"importSuccess": "Карты были импортированы"
+	}
+}

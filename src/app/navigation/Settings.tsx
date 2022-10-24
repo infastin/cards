@@ -1,6 +1,6 @@
 import React from "react";
 import {MD3Theme} from "react-native-paper/lib/typescript/types";
-import {Button, Dialog, List, Menu, Portal, Snackbar, TextInput, TouchableRipple, Text, withTheme} from "react-native-paper";
+import {Button, Dialog, List, Menu, Portal, TextInput, TouchableRipple, Text, withTheme} from "react-native-paper";
 import Locale from "../locale";
 import {StackProps} from "../models/Navigation";
 import {FlatList, LayoutRectangle, SafeAreaView, ScrollView, View, StyleSheet} from "react-native";
@@ -13,6 +13,7 @@ import RNFS from "react-native-fs";
 import {Exception, writeManyCards} from "../models/DatabaseWrite";
 import {Buffer} from 'buffer';
 import {useStateCallback} from "../models/Hooks";
+import Infobar from "../components/Infobar";
 
 export type SettingsProps = StackProps<"Settings"> & {
 	theme: MD3Theme,
@@ -28,8 +29,9 @@ const Settings = ({theme}: SettingsProps) => {
 	const [exportTextLayout, setExportTextLayout] = React.useState<LayoutRectangle>({x: 0, y: 0, width: 0, height: 0});
 	const [exportIconName, setExportIconName] = React.useState<string>("menu-down");
 
-	const [snackVisible, setSnackVisible] = React.useState<boolean>(false);
-	const [snackMsg, setSnackMsg] = React.useState<string>("");
+	const [infoVisible, setInfoVisible] = React.useState<boolean>(false);
+	const [infoMsg, setInfoMsg] = React.useState<string>("");
+	const [infoVariant, setInfoVariant] = React.useState<"info" | "error" | "success">("info");
 
 	const exportFormats = [
 		{
@@ -128,8 +130,9 @@ const Settings = ({theme}: SettingsProps) => {
 						const cardsBson = BSON.deserialize(Buffer.from(data, "base64"));
 						cards = Object.values(cardsBson);
 					} catch {
-						setSnackMsg(`${loc.t("errorLabel")}: ${loc.t("invalidFile")}`)
-						setSnackVisible(true);
+						setInfoVariant("error");
+						setInfoMsg(`${loc.t("errorLabel")}: ${loc.t("invalidFile")}`);
+						setInfoVisible(true);
 						return;
 					}
 				}
@@ -140,10 +143,14 @@ const Settings = ({theme}: SettingsProps) => {
 
 				try {
 					writeManyCards({db, cards});
+					setInfoVariant("success");
+					setInfoMsg(`${loc.t("successLabel")}: ${loc.t("importSuccess")}`);
+					setInfoVisible(true);
 				} catch (err) {
 					const error: Exception = err;
-					setSnackMsg(`${loc.t("errorLabel")}: ${loc.t(error.msg)}`);
-					setSnackVisible(true);
+					setInfoVariant("error");
+					setInfoMsg(`${loc.t("errorLabel")}: ${loc.t(error.msg)}`);
+					setInfoVisible(true);
 				}
 			}
 		})();
@@ -206,17 +213,17 @@ const Settings = ({theme}: SettingsProps) => {
 					/>
 				</List.Section>
 			</ScrollView>
-			<Snackbar
-				style={{backgroundColor: theme.colors.errorContainer}}
-				visible={snackVisible}
+			<Infobar
+				variant={infoVariant}
+				text={infoMsg}
+				visible={infoVisible}
 				duration={3500}
 				onDismiss={() => {
-					setSnackVisible(false);
-					setSnackMsg("");
+					setInfoVisible(false);
+					setInfoMsg("");
+					setInfoVariant("info");
 				}}
-			>
-				<Text style={{color: theme.colors.onErrorContainer}}>{snackMsg}</Text>
-			</Snackbar>
+			/>
 			<Portal>
 				<Dialog
 					visible={langDialogVisible}

@@ -9,6 +9,7 @@ import * as Clipboard from "expo-clipboard";
 import {ColorPalletteStr} from "../models/Colors";
 import Barcode from "../components/Barcode";
 import Locale from "../locale";
+import Infobar from "../components/Infobar";
 
 export type CardsProps = StackProps<"AddCard"> & {
 	theme: MD3Theme;
@@ -29,6 +30,10 @@ const Cards = ({navigation}: CardsProps) => {
 	const [oldBrightness, setOldBrightness] = React.useState<number>(0);
 	const [modalVisible, setModalVisible] = React.useState<boolean>(false);
 	const [modalBarcodeProps, setModalBarcodeProps] = React.useState<ModalBarcodeProps | null>(null);
+
+	const [infoVisible, setInfoVisible] = React.useState<boolean>(false);
+	const [infoMsg, setInfoMsg] = React.useState<string>("");
+
 
 	React.useEffect(() => {
 		const listener = Dimensions.addEventListener("change", ({window}) => setDimension(window));
@@ -61,7 +66,11 @@ const Cards = ({navigation}: CardsProps) => {
 							format={item.format}
 							bgColor={item.color}
 							fgColor={ColorPalletteStr[item.color].fg.onSurface}
-							onCopy={async () => await Clipboard.setStringAsync(item.code)}
+							onCopy={() => {
+								(async () => await Clipboard.setStringAsync(item.code))();
+								setInfoMsg(`${loc.t("infoLabel")}: ${loc.t("codeCopied")}`);
+								setInfoVisible(true);
+							}}
 							onDelete={() => {
 								db.write(() => {
 									db.delete(db.objectForPrimaryKey(Database.Card, item._id));
@@ -102,6 +111,15 @@ const Cards = ({navigation}: CardsProps) => {
 						/>
 					</View>
 				)}
+			/>
+			<Infobar
+				text={infoMsg}
+				visible={infoVisible}
+				duration={3500}
+				onDismiss={() => {
+					setInfoVisible(false);
+					setInfoMsg("");
+				}}
 			/>
 			<AnimatedFAB
 				icon={"plus"}

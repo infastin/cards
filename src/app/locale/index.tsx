@@ -21,10 +21,15 @@ const translations = preval`
 	const Scan = require('./Scan.json');
 	const Settings = require('./Settings.json');
 	const Errors = require('./Errors.json');
+	const Success = require('./Success.json');
+	const Info = require('./Info.json');
 	const About = require('./About.json');
 	const Routes = require('./Routes.json');
 	const merge = require('deepmerge');
-	module.exports = merge.all([AddCard, Cards, LoyaltyCard, Header, Scan, Settings, Errors, About, Routes]);
+	module.exports = merge.all([
+		AddCard, Cards, Success, LoyaltyCard, Info,
+		Header, Scan, Settings, Errors, About, Routes
+	]);
 `;
 
 const i18n = new I18n(translations);
