@@ -141,7 +141,7 @@ const Scan = ({navigation, route}: ScanProps) => {
 						<Rect x="10%" y="20%" width="80%" height="30%" rx="16" stroke="white" strokeWidth="2" />
 					</Svg>
 					<View style={styles.helpContainer}>
-						<Text variant="titleMedium" style={styles.help}>{loc.t("ScanHelpMsg")}</Text>
+						<Text variant="titleMedium" style={styles.help}>{loc.t("scanHelpMsg")}</Text>
 					</View>
 				</View>
 				:
@@ -149,7 +149,7 @@ const Scan = ({navigation, route}: ScanProps) => {
 					<View style={styles.placeholderGroup}>
 						<Icon color="white" source="camera" size={64} />
 						<Text variant="headlineMedium" style={styles.placeholderText}>
-							Give permission to use the camera
+							{loc.t("scanPlaceholderText")}
 						</Text>
 					</View>
 				</View>

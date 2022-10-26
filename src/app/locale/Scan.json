@@ -1,8 +1,10 @@
 {
 	"en-US": {
-		"ScanHelpMsg": "Point the camera at the barcode"
+		"scanHelpMsg": "Point the camera at the barcode",
+		"scanPlaceholderText": "Give permission to use the camera"
 	},
 	"ru-RU": {
-		"ScanHelpMsg": "Наведите камеру на штрихкод"
+		"scanHelpMsg": "Наведите камеру на штрихкод",
+		"scanPlaceholderText": "Выдайте разрешение на использование камеры"
 	}
 }
