@@ -15,7 +15,6 @@ const Header = ({options, route, navigation, back}: StackHeaderProps) => {
 		<Appbar.Header
 			mode="small"
 			style={name === "Scan" ? styles.headerScan : undefined}
-			dark={true}
 		>
 			{back && <Appbar.BackAction
 				color={name === "Scan" ? "#ffffff" : undefined}

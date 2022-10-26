@@ -11,6 +11,7 @@ export type StackParamList = {
 	},
 	Scan: {
 		types: BarcodeFormat[],
+		hasPermission: boolean,
 	},
 	Settings: undefined,
 	About: undefined,

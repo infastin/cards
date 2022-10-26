@@ -3,7 +3,7 @@
 		"name": "Loyalty Cards",
 		"slug": "cards",
 		"owner": "infastin",
-		"version": "1.2.3",
+		"version": "1.2.4",
 		"sdkVersion": "46.0.0",
 		"platforms": [
 			"android"

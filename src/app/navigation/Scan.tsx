@@ -48,19 +48,11 @@ export type ScanProps = StackProps<"Scan"> & {
 };
 
 const Scan = ({navigation, route}: ScanProps) => {
-	const [hasPermission, setHasPermission] = React.useState<boolean>(false);
 	const [active, setActive] = React.useState<boolean>(true);
 	const barcodeScanned = useSharedValue<boolean>(false);
 
 	const devices = useCameraDevices();
 	const device = devices.back;
-
-	React.useEffect(() => {
-		(async () => {
-			const status = await Camera.requestCameraPermission();
-			setHasPermission(status === "authorized");
-		})();
-	}, []);
 
 	const onBarcodeScanned = ({format, data}: {format: BarcodeFormat, data: string}) => {
 		setActive(false);
@@ -121,52 +113,54 @@ const Scan = ({navigation, route}: ScanProps) => {
 
 	const loc = Locale.useLocale();
 
-	return (
-		<>
-			{hasPermission && device ?
-				<View>
-					<Camera
-						style={StyleSheet.absoluteFill}
-						device={device}
-						isActive={active}
-						frameProcessor={frameProcessor}
-						frameProcessorFps={5}
-					/>
-					<Svg>
-						<Defs>
-							<Mask id="mask">
-								<Rect width="100%" height="100%" fill="white" />
-								<Rect x="10%" y="20%" width="80%" height="30%" rx="16" fill="black" />
-								<Rect x="10%" y="60%" width="80%" height="8%" rx="8" fill="black" />
-							</Mask>
-						</Defs>
-						<Rect mask="url(#mask)" width="100%" height="100%" fill="black" fillOpacity={0.5} />
-						<Rect x="10%" y="20%" width="80%" height="30%" rx="16" stroke="white" strokeWidth="2" />
-					</Svg>
-					<View style={styles.helpContainer}>
-						<Text variant="titleMedium" style={styles.help}>{loc.t("scanHelpMsg")}</Text>
-					</View>
+	if (!device) {
+		return <View />
+	} else if (route.params.hasPermission) {
+		return (
+			<View>
+				<Camera
+					style={StyleSheet.absoluteFill}
+					device={device}
+					isActive={active}
+					frameProcessor={frameProcessor}
+					frameProcessorFps={5}
+				/>
+				<Svg>
+					<Defs>
+						<Mask id="mask">
+							<Rect width="100%" height="100%" fill="white" />
+							<Rect x="10%" y="20%" width="80%" height="30%" rx="16" fill="black" />
+							<Rect x="10%" y="60%" width="80%" height="8%" rx="8" fill="black" />
+						</Mask>
+					</Defs>
+					<Rect mask="url(#mask)" width="100%" height="100%" fill="black" fillOpacity={0.5} />
+					<Rect x="10%" y="20%" width="80%" height="30%" rx="16" stroke="white" strokeWidth="2" />
+				</Svg>
+				<View style={styles.helpContainer}>
+					<Text variant="titleMedium" style={styles.help}>{loc.t("scanHelpMsg")}</Text>
 				</View>
-				:
-				<View style={[StyleSheet.absoluteFill, styles.placeholderContainer]}>
-					<View style={styles.placeholderGroup}>
-						<Icon color="white" source="camera" size={64} />
-						<Text variant="headlineMedium" style={styles.placeholderText}>
-							{loc.t("scanPlaceholderText")}
-						</Text>
-						<Button mode="contained" onPress={async () => {
-							await IntentLauncher.startActivityAsync({
-								action: IntentLauncher.ActivityAction.APPLICATION_DETAILS_SETTINGS,
-								data: `package:${AppInfo.pkgName}`
-							})
-						}}>
-							{loc.t("scanGotoSettings")}
-						</Button>
-					</View>
+			</View>
+		)
+	} else {
+		return (
+			<View style={[StyleSheet.absoluteFill, styles.placeholderContainer]}>
+				<View style={styles.placeholderGroup}>
+					<Icon color="white" source="camera" size={64} />
+					<Text variant="headlineMedium" style={styles.placeholderText}>
+						{loc.t("scanPlaceholderText")}
+					</Text>
+					<Button mode="contained" onPress={async () => {
+						await IntentLauncher.startActivityAsync({
+							action: IntentLauncher.ActivityAction.APPLICATION_DETAILS_SETTINGS,
+							data: `package:${AppInfo.pkgName}`
+						})
+					}}>
+						{loc.t("scanGotoSettings")}
+					</Button>
 				</View>
-			}
-		</>
-	)
+			</View>
+		)
+	}
 };
 
 const styles = StyleSheet.create({

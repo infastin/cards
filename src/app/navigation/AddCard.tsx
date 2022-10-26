@@ -1,6 +1,7 @@
 import React from "react";
 import {Dimensions, FlatList, SafeAreaView, ScaledSize, StyleSheet, View} from "react-native";
 import {Button, TextInput, MD3Theme, withTheme, Text, HelperText, Chip} from "react-native-paper";
+import {Camera} from "react-native-vision-camera";
 import ColorButton from "../components/colorbutton";
 import {ScanTypes} from "./Scan";
 import {StackProps} from "../models/Navigation";
@@ -203,9 +204,11 @@ const AddCard = ({navigation, route}: AddCardProps) => {
 							<Button
 								style={styles.scanButton}
 								mode="outlined"
-								onPress={() => {
+								onPress={async () => {
+									const status = await Camera.requestCameraPermission();
 									navigation.navigate("Scan", {
 										types: ScanTypes.ALL,
+										hasPermission: status === "authorized",
 									});
 								}}
 							>
