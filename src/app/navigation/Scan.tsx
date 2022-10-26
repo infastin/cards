@@ -114,7 +114,16 @@ const Scan = ({navigation, route}: ScanProps) => {
 	const loc = Locale.useLocale();
 
 	if (!device) {
-		return <View />
+		return (
+			<View style={[StyleSheet.absoluteFill, styles.noCameraContainer]}>
+				<View style={styles.noCameraGroup}>
+					<Icon color="white" source="camera-off" size={64} />
+					<Text variant="headlineMedium" style={styles.noCameraText}>
+						{loc.t("scanNoCameraText")}
+					</Text>
+				</View>
+			</View>
+		)
 	} else if (route.params.hasPermission) {
 		return (
 			<View>
@@ -191,6 +200,19 @@ const styles = StyleSheet.create({
 		color: "white",
 		textAlign: "center",
 		marginBottom: 16,
+	},
+	noCameraContainer: {
+		backgroundColor: "rgba(0, 0, 0, 0.5)"
+	},
+	noCameraGroup: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		padding: 16,
+	},
+	noCameraText: {
+		color: "white",
+		textAlign: "center",
 	},
 });
 

@@ -2,11 +2,13 @@
 	"en-US": {
 		"scanHelpMsg": "Point the camera at the barcode",
 		"scanPlaceholderText": "Give permission to use the camera",
-		"scanGotoSettings": "Go to settings"
+		"scanGotoSettings": "Go to settings",
+		"scanNoCameraText": "No camera found"
 	},
 	"ru-RU": {
 		"scanHelpMsg": "Наведите камеру на штрихкод",
 		"scanPlaceholderText": "Выдайте разрешение на использование камеры",
-		"scanGotoSettings": "Перейти в настройки"
+		"scanGotoSettings": "Перейти в настройки",
+		"scanNoCameraText": "Камера не была найдена"
 	}
 }
