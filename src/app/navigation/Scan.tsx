@@ -9,6 +9,7 @@ import {MD3Theme} from "react-native-paper/lib/typescript/types";
 import Locale from "../locale";
 import {scanBarcodes, BarcodeFormat} from 'vision-camera-code-scanner';
 import {useSharedValue, runOnJS} from "react-native-reanimated";
+import Icon from "react-native-paper/src/components/Icon";
 
 const ScanTypesCodes = {
 	CODE128: BarcodeFormat.CODE_128,
@@ -144,7 +145,14 @@ const Scan = ({navigation, route}: ScanProps) => {
 					</View>
 				</View>
 				:
-				undefined
+				<View style={[StyleSheet.absoluteFill, styles.placeholderContainer]}>
+					<View style={styles.placeholderGroup}>
+						<Icon color="white" source="camera" size={64} />
+						<Text variant="headlineMedium" style={styles.placeholderText}>
+							Give permission to use the camera
+						</Text>
+					</View>
+				</View>
 			}
 		</>
 	)
@@ -164,7 +172,19 @@ const styles = StyleSheet.create({
 	},
 	help: {
 		color: "white",
-	}
+	},
+	placeholderContainer: {
+		backgroundColor: "rgba(0, 0, 0, 0.5)"
+	},
+	placeholderGroup: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	placeholderText: {
+		color: "white",
+		textAlign: "center",
+	},
 });
 
 export default Scan;

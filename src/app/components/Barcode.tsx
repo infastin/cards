@@ -27,10 +27,13 @@ type Rectangle = {
 };
 
 const Barcode = ({value, format = "CODE128"}: BarcodeProps) => {
+	const [width, setWidth] = React.useState<number>(0);
+	const [height, setHeight] = React.useState<number>(0);
+
 	const db = Database.useDatabase();
 
 	const getRectangles1D = (encoding: BwipJs.RawReturn): Rectangle[] => {
-		const unitWidth = 100 / encoding.sbs.reduce((pSum, number) => pSum + number, 0);
+		const unitWidth = 1 / encoding.sbs.reduce((pSum, number) => pSum + number, 0);
 
 		const rects = [];
 		let x = 0
@@ -43,7 +46,7 @@ const Barcode = ({value, format = "CODE128"}: BarcodeProps) => {
 					x: x,
 					y: 0,
 					width: unitWidth * barWidth,
-					height: 100,
+					height: 1,
 				});
 			}
 
@@ -54,8 +57,8 @@ const Barcode = ({value, format = "CODE128"}: BarcodeProps) => {
 	};
 
 	const getRectangles2D = (encoding: BwipJs.RawReturn): Rectangle[] => {
-		const unitWidth = 100 / encoding.pixx;
-		const unitHeight = 100 / encoding.pixy;
+		const unitWidth = 1 / encoding.pixx;
+		const unitHeight = 1 / encoding.pixy;
 
 		const rects = [];
 		let y = 0;
@@ -134,15 +137,20 @@ const Barcode = ({value, format = "CODE128"}: BarcodeProps) => {
 	const rects = getRectangles();
 
 	return (
-		<Svg>
+		<Svg
+			onLayout={(props) => {
+				setWidth(props.nativeEvent.layout.width);
+				setHeight(props.nativeEvent.layout.height);
+			}}
+		>
 			{rects.map((rect, i) => {
 				return <Rect
 					key={i}
 					fill="black"
-					x={rect.x + "%"}
-					y={rect.y + "%"}
-					width={(rect.width + 0.15) + "%"}
-					height={(rect.height + 0.15) + "%"}
+					x={width * rect.x + 0.5}
+					y={height * rect.y + 0.5}
+					width={width * rect.width + 0.5}
+					height={height * rect.height + 0.5}
 				/>
 			})}
 		</Svg>
