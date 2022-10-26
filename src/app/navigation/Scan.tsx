@@ -3,13 +3,16 @@ import React from "react";
 import {Camera, useCameraDevices, useFrameProcessor, Frame} from "react-native-vision-camera";
 import {useKeepAwake} from "expo-keep-awake";
 import {View, StyleSheet} from "react-native";
-import {Text} from "react-native-paper";
+import {Button, Text} from "react-native-paper";
 import {StackProps} from "../models/Navigation";
 import {MD3Theme} from "react-native-paper/lib/typescript/types";
 import Locale from "../locale";
 import {scanBarcodes, BarcodeFormat} from 'vision-camera-code-scanner';
 import {useSharedValue, runOnJS} from "react-native-reanimated";
 import Icon from "react-native-paper/src/components/Icon";
+import * as IntentLauncher from 'expo-intent-launcher';
+import Intent from "../models/Intent";
+import AppInfo from "../models/AppInfo";
 
 const ScanTypesCodes = {
 	CODE128: BarcodeFormat.CODE_128,
@@ -151,6 +154,14 @@ const Scan = ({navigation, route}: ScanProps) => {
 						<Text variant="headlineMedium" style={styles.placeholderText}>
 							{loc.t("scanPlaceholderText")}
 						</Text>
+						<Button mode="contained" onPress={async () => {
+							await IntentLauncher.startActivityAsync({
+								action: IntentLauncher.ActivityAction.APPLICATION_DETAILS_SETTINGS,
+								data: `package:${AppInfo.pkgName}`
+							})
+						}}>
+							{loc.t("scanGotoSettings")}
+						</Button>
 					</View>
 				</View>
 			}
@@ -184,6 +195,7 @@ const styles = StyleSheet.create({
 	placeholderText: {
 		color: "white",
 		textAlign: "center",
+		marginBottom: 16,
 	},
 });
 
