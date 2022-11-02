@@ -3,7 +3,7 @@ import React from "react";
 import {Camera, useCameraDevices, useFrameProcessor, Frame} from "react-native-vision-camera";
 import {useKeepAwake} from "expo-keep-awake";
 import {View, StyleSheet} from "react-native";
-import {Button, Text} from "react-native-paper";
+import {ActivityIndicator, Button, Text} from "react-native-paper";
 import {StackProps} from "../models/Navigation";
 import {MD3Theme} from "react-native-paper/lib/typescript/types";
 import Locale from "../locale";
@@ -116,12 +116,7 @@ const Scan = ({navigation, route}: ScanProps) => {
 	if (!device) {
 		return (
 			<View style={[StyleSheet.absoluteFill, styles.noCameraContainer]}>
-				<View style={styles.noCameraGroup}>
-					<Icon color="white" source="camera-off" size={64} />
-					<Text variant="headlineMedium" style={styles.noCameraText}>
-						{loc.t("scanNoCameraText")}
-					</Text>
-				</View>
+				<ActivityIndicator animating={true} size="large" />
 			</View>
 		)
 	} else if (route.params.hasPermission) {
@@ -202,17 +197,11 @@ const styles = StyleSheet.create({
 		marginBottom: 16,
 	},
 	noCameraContainer: {
-		backgroundColor: "rgba(0, 0, 0, 0.5)"
-	},
-	noCameraGroup: {
+		backgroundColor: "rgba(0, 0, 0, 0.5)",
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 16,
-	},
-	noCameraText: {
-		color: "white",
-		textAlign: "center",
 	},
 });
 
